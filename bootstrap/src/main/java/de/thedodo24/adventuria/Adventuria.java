@@ -5,6 +5,7 @@ import com.arangodb.ArangoDatabase;
 import de.thedodo24.adventuria.common.CommonModule;
 import de.thedodo24.adventuria.common.module.ModuleManager;
 import de.thedodo24.adventuria.common.utils.ConfigFile;
+import de.thedodo24.adventuria.economy.EconomyModule;
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -38,6 +39,6 @@ public class Adventuria extends JavaPlugin {
         arangoDatabase = arangoDB.db(config.getString("database.database"));
 
         moduleManager = new ModuleManager(getArangoDatabase(), this);
-        moduleManager.loadModules(CommonModule.class);
+        moduleManager.loadModules(CommonModule.class, EconomyModule.class);
     }
 }
