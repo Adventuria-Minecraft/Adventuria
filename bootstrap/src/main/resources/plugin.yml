@@ -1,0 +1,7 @@
+name: Adventuria
+version: '${project.version}'
+main: de.thedodo24.adventuria.Adventuria
+api-version: 1.18
+prefix: Adventuria
+authors: [ TheDodo24 ]
+description: Adventuria system plugin
