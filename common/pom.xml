@@ -26,6 +26,10 @@
             <artifactId>lombok</artifactId>
         </dependency>
         <dependency>
+            <groupId>net.essentialsx</groupId>
+            <artifactId>EssentialsX</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.arangodb</groupId>
             <artifactId>arangodb-java-driver</artifactId>
         </dependency>
