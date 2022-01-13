@@ -1,9 +1,11 @@
 package de.thedodo24.adventuria.common;
 
+import de.thedodo24.adventuria.common.listener.PlayerListener;
 import de.thedodo24.adventuria.common.module.Module;
 import de.thedodo24.adventuria.common.module.ModuleManager;
 import de.thedodo24.adventuria.common.module.ModuleSettings;
 import de.thedodo24.adventuria.common.player.User;
+import de.thedodo24.adventuria.common.utils.Language;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -34,11 +36,13 @@ public class CommonModule extends Module {
 
     @Override
     public void onEnable() {
+        Language.init();
         dateFormat = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SS");
         setTimes();
         if(Bukkit.getOnlinePlayers().size() > 0) {
             Bukkit.getOnlinePlayers().forEach(all -> getPlayerOnline().put(all.getUniqueId(), System.currentTimeMillis()));
         }
+        registerListener(new PlayerListener());
     }
 
     private void setTimes() {

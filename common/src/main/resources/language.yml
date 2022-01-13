@@ -1,0 +1,42 @@
+no-permissions: "§cYou do not have the permission to execute this command. ({0})"
+haveto-player: "[Adventuria] Du musst ein Spieler sein."
+player-not-exists: "Der Spieler §c{0} §7existiert nicht."
+argument-has-to-be: "§cArgument {0} §7muss {1} sein. §8({2})"
+
+#|----------|
+#   MONEY
+#|----------|
+money-prefix: "§7§l| §aGeld §7» "
+
+# HELP MESSAGE
+money-help-pay: "/money pay [Name] [Betrag]"
+money-help-pay-desc: " | Überweist einem Spieler Geld"
+money-help-balance: "/money balance <[Name]>"
+money-help-balance-desc: " | Zeigt den aktuellen Kontostand"
+money-help-top: "/money top"
+money-help-top-desc: " | Zeigt die vermögensreichsten Spieler"
+money-help-take: "/money take [Name] [Betrag]"
+money-help-take-desc: " | Nimmt einem Spieler einen Betrag"
+money-help-give: "/money give [Name] [Betrag]"
+money-help-give-desc: " | Gibt einem Spieler einen Betrag"
+money-help-set: "/money set [Name] [Betrag]"
+money-help-set-desc: " | Setzt einem Spieler einen Betrag"
+money-help-console: "/money give [Spieler] [Betrag]\n/money take [Spieler] [Betrag]\n/money set [Spieler] [Betrag]\n/money balance [Spieler]\n/money top"
+
+# COMMANDS
+money-balance: "Dein Kontostand beträgt §a{0}"
+money-balance-player: "Der Kontostand von §a{0} §7beträgt §a{1}"
+money-pay-other: "§a{0} §7hat dir §a{1} §7überwiesen."
+money-pay: "§7Du hast §a{0} {1} §7überwiesen."
+money-pay-yourself: "§7Du kannst dir nicht selbst Geld überweisen."
+money-not-enough: "§7Du hast nicht genügend Geld."
+money-give-other: "§a{0} §7hat dir §a{1} §7gegeben."
+money-give: "Du hast §a{0} {1} §7gegeben."
+money-give-notify: "§a{0} §7hat §a{1} §7{2} §7gegeben."
+money-set-other: "§a{0} §7hat deinen Kontostand auf §a{1} §7gesetzt."
+money-set: "Du hast den Kontostand von §a{0} §7auf§a {1} §7gesetzt."
+money-set-notify: "§a{0} §7hat den Kontostand von §a{1} auf §7{2} §7gesetzt."
+money-take-other: "§a{0} §7hat dir §a{1} §7von deinem Konto abgezogen."
+money-take: "Du hast §a{1} §7von§a {0}§7's Konto abgezogen."
+money-take-notify: "§a{0} §7hat §a{2} §7von {1}'s Konto abgezogen."
+
