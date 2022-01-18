@@ -40,3 +40,12 @@ money-take-other: "§a{0} §7hat dir §a{1} §7von deinem Konto abgezogen."
 money-take: "Du hast §a{1} §7von§a {0}§7's Konto abgezogen."
 money-take-notify: "§a{0} §7hat §a{2} §7von {1}'s Konto abgezogen."
 
+#|----------|
+#   ONTIME
+#|----------|
+ontime-prefix: "§7§l| §aOntime §7» "
+
+ontime-help: "§a/ontime <[Spieler]/history/top> <Spieler>"
+ontime-self: "Du hast folgende §aOntime§7:\n§7» Insgesamt: §a{0}\n§7» Diese Woche: §a{1}\n§7» Heute: §a{2}\n§7» AFK-Zeit: §a{3}"
+ontime-others: "§a{0} §7hat folgende §aOntime§7:\n§7» Insgesamt: §a{1}\n§7» Diese Woche: §a{2}\n§7» Heute: §a{3}\n§7» AFK-Zeit: §a{4}"
+

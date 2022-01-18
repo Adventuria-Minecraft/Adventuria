@@ -3,5 +3,43 @@ version: '${project.version}'
 main: de.thedodo24.adventuria.Adventuria
 api-version: 1.18
 prefix: Adventuria
+loadbefore: [ Essentials ]
+softdepend: [ Vault ]
+depend: [ Essentials ]
 authors: [ TheDodo24 ]
 description: Adventuria system plugin
+
+commands:
+  money:
+    description: "Economy system. Type '/money help' for help"
+  ontime:
+    description: "Ontime system. Type '/ontime help' for help"
+  adventuria:
+    description: "Management command for plugin"
+    permission: advi.manage
+
+permissions:
+  money.*:
+    description: "Money admin commands"
+    children:
+      money.admin: true
+      money.give: true
+      money.take: true
+      money.set: true
+      money.notify: true
+  money.admin:
+    description: "Help message & tab complete for money commands"
+  money.give:
+    description: "/money give"
+  money.take:
+    description: "/money take"
+  money.set:
+    description: "/money set"
+  money.notify:
+    description: "Money notifications"
+  advi.*:
+    description: "Plugin management admin commands"
+    children:
+      advi.manage: true
+  advi.manage:
+    description: "/adventuria"

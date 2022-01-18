@@ -1,11 +1,13 @@
 package de.thedodo24.adventuria.common;
 
+import de.thedodo24.adventuria.common.commands.OntimeCommand;
 import de.thedodo24.adventuria.common.listener.PlayerListener;
 import de.thedodo24.adventuria.common.module.Module;
 import de.thedodo24.adventuria.common.module.ModuleManager;
 import de.thedodo24.adventuria.common.module.ModuleSettings;
 import de.thedodo24.adventuria.common.player.User;
 import de.thedodo24.adventuria.common.utils.Language;
+import de.thedodo24.adventuria.common.utils.Ontime;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -43,6 +45,11 @@ public class CommonModule extends Module {
             Bukkit.getOnlinePlayers().forEach(all -> getPlayerOnline().put(all.getUniqueId(), System.currentTimeMillis()));
         }
         registerListener(new PlayerListener());
+        registerCommands();
+    }
+
+    private void registerCommands() {
+        new OntimeCommand();
     }
 
     private void setTimes() {
@@ -75,6 +82,7 @@ public class CommonModule extends Module {
 
     @Override
     public void onDisable() {
+        Ontime.checkTime();
         Bukkit.getOnlinePlayers().forEach(all -> {
             User u = CommonModule.getInstance().getManager().getUserManager().get(all.getUniqueId());
             long ontime = System.currentTimeMillis() - CommonModule.getInstance().getPlayerOnline().get(all.getUniqueId());
