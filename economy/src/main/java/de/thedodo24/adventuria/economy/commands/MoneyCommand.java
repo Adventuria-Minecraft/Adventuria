@@ -35,7 +35,9 @@ public class MoneyCommand implements CommandExecutor, TabCompleter {
     }
 
     private String formatValue(long v) {
-        return NumberFormat.getCurrencyInstance(Locale.GERMANY).format(v).split(" ")[0] + " Coins";
+        if(v == 1)
+            return v + " Coin";
+        return v + " Coins";
     }
 
     private String prefix = Language.get("money-prefix");
@@ -66,8 +68,8 @@ public class MoneyCommand implements CommandExecutor, TabCompleter {
         topHelpCommand.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/money top"));
         topHelpCommand.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("/money top").create()));
         topHelpInfo.setColor(ChatColor.GRAY);
-        topHelp.addExtra(balanceHelpCommand);
-        topHelp.addExtra(balanceHelpInfo);
+        topHelp.addExtra(topHelpCommand);
+        topHelp.addExtra(topHelpInfo);
 
 
         TextComponent takeHelp = new TextComponent(prefix);
@@ -198,7 +200,7 @@ public class MoneyCommand implements CommandExecutor, TabCompleter {
                         arg = arg.replace(",", ".");
                     long value;
                     try {
-                        value = (long) (Double.parseDouble(arg) * 100);
+                        value = Long.parseLong(arg);
                     } catch(NumberFormatException e) {
                         s.sendMessage(prefix + Language.get("argument-has-to-be", "2", "eine positive Zahl", args[2]));
                         return false;

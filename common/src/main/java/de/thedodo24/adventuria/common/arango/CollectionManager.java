@@ -4,12 +4,13 @@ import com.arangodb.ArangoCollection;
 import com.arangodb.ArangoCursor;
 import com.arangodb.ArangoDatabase;
 import com.arangodb.entity.BaseDocument;
-import com.arangodb.entity.KeyType;
 import com.google.common.collect.Lists;
+import de.thedodo24.adventuria.common.CommonModule;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 public class CollectionManager<Writable extends ArangoWritable<KeyType>, KeyType> {
 
@@ -95,13 +96,13 @@ public class CollectionManager<Writable extends ArangoWritable<KeyType>, KeyType
         if((value = this.cache.get(key)) != null)
             return this.save(value);
 
-        System.err.println("[Adventuria] CollectionManager: Requested key was not found in cache");
+        CommonModule.getInstance().getPlugin().getLogger().log(Level.SEVERE, "[Adventuria] CollectionManager: Requested key was not found in cache");
         return false;
     }
 
     public boolean save(Writable value) {
         if(value == null) {
-            System.err.println("[Adventuria] CollectionManager: Save-Value cannot be null");
+            CommonModule.getInstance().getPlugin().getLogger().log(Level.SEVERE,"[Adventuria] CollectionManager: Save-Value cannot be null");
             return false;
         }
 

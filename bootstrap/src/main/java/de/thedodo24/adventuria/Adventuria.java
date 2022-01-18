@@ -9,6 +9,8 @@ import de.thedodo24.adventuria.economy.EconomyModule;
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.logging.Level;
+
 @Getter
 public class Adventuria extends JavaPlugin {
 
@@ -35,10 +37,11 @@ public class Adventuria extends JavaPlugin {
         config.save();
 
         arangoDB = new ArangoDB.Builder().host(config.getString("database.host"), config.getInt("database.port"))
-                .user(config.getString("database.user")).password(config.getString("password")).build();
+                .user(config.getString("database.user")).password(config.getString("database.password")).build();
         arangoDatabase = arangoDB.db(config.getString("database.database"));
 
         moduleManager = new ModuleManager(getArangoDatabase(), this);
         moduleManager.loadModules(CommonModule.class, EconomyModule.class);
+        getLogger().log(Level.INFO, "Loaded Adventuria plugin");
     }
 }

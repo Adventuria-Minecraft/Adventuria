@@ -34,7 +34,9 @@ public class EconomyHandler extends AbstractEconomy {
 
     @Override
     public String format(double v) {
-        return NumberFormat.getCurrencyInstance(Locale.GERMANY).format(v).split(" ")[0] + " Coins";
+        if(v == 1)
+            return v + " Coin";
+        return v + " Coins";
     }
 
     @Override
