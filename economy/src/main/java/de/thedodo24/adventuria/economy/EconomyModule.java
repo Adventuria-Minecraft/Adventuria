@@ -34,7 +34,10 @@ public class EconomyModule extends Module {
             CommonModule.getInstance().getPlugin().getLogger().log(Level.SEVERE, "[Adventuria] Vault is depended to load the economy module");
             onDisable();
         }
+    }
 
+    @Override
+    public void onEnable() {
         new MoneyCommand();
     }
 }
