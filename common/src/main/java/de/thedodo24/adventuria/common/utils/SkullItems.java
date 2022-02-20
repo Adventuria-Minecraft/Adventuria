@@ -1,6 +1,7 @@
 package de.thedodo24.adventuria.common.utils;
 
 import com.google.common.collect.Lists;
+import de.thedodo24.adventuria.common.job.JobType;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
@@ -36,7 +37,8 @@ public class SkullItems {
     private static ItemStack setDisplayName(ItemStack itemStack, String displayName, List<String> lore) {
         ItemMeta m = itemStack.getItemMeta();
         m.displayName(Component.text(displayName));
-        List<Component> loreFinal = lore.stream().map(s -> Component.text(displayName).asComponent()).toList();
+
+        List<Component> loreFinal = lore.stream().map(s -> Component.text(s).asComponent()).toList();
         m.lore(loreFinal);
         itemStack.setItemMeta(m);
         return itemStack;
@@ -52,32 +54,28 @@ public class SkullItems {
     }
 
     public static ItemStack getNumberSkull(int week, String displayName, List<String> lore) {
-        switch(week) {
-            case 1:
-                return getGreenOneSkull(displayName, lore);
-            case 2:
-                return getGreenTwoSkull(displayName, lore);
-            case 3:
-                return getGreenThreeSkull(displayName, lore);
-            case 4:
-                return getGreenFourSkull(displayName, lore);
-            case 5:
-                return getGreenFiveSkull(displayName, lore);
-            case 6:
-                return getGreenSixSkull(displayName, lore);
-            case 7:
-                return getGreenSevenSkull(displayName, lore);
-            case 8:
-                return getGreenEightSkull(displayName, lore);
-            case 9:
-                return getGreenNineSkull(displayName, lore);
-            default:
-                return new ItemStack(Material.AIR);
-        }
+        return switch (week) {
+            case 1 -> getGreenOneSkull(displayName, lore);
+            case 2 -> getGreenTwoSkull(displayName, lore);
+            case 3 -> getGreenThreeSkull(displayName, lore);
+            case 4 -> getGreenFourSkull(displayName, lore);
+            case 5 -> getGreenFiveSkull(displayName, lore);
+            case 6 -> getGreenSixSkull(displayName, lore);
+            case 7 -> getGreenSevenSkull(displayName, lore);
+            case 8 -> getGreenEightSkull(displayName, lore);
+            case 9 -> getGreenNineSkull(displayName, lore);
+            default -> new ItemStack(Material.AIR);
+        };
     }
 
     public static ItemStack getGreenPlusSkull(String displayName) {
         String b64 = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNWZmMzE0MzFkNjQ1ODdmZjZlZjk4YzA2NzU4MTA2ODFmOGMxM2JmOTZmNTFkOWNiMDdlZDc4NTJiMmZmZDEifX19";
+        ItemStack skull = get(b64);
+        return setDisplayName(skull, displayName);
+    }
+
+    public static ItemStack getOrangeNewJob(String displayName) {
+        String b64 = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTE0YzI2Y2U3ODU1ZDY1MjJiZmE4NmI3N2E3NGE5ZmRjNzkxMjc1MTNiMmI3OGFiZTQ3ODFhZDY2Njc2MTMzIn19fQ==";
         ItemStack skull = get(b64);
         return setDisplayName(skull, displayName);
     }
@@ -192,4 +190,50 @@ public class SkullItems {
         return setDisplayName(skull, displayName, lore);
     }
 
+    public static ItemStack getJobSkull(JobType jobType, String displayName, List<String> lore) {
+        return switch (jobType) {
+            case FISH -> getJobFishSkull(displayName, lore);
+            case HUNT -> getJobHuntSkull(displayName, lore);
+            case WOOD -> getJobWoodSkull(displayName, lore);
+            case MINER -> getJobMinerSkull(displayName, lore);
+            case BUTCHER -> getJobButcherSkull(displayName, lore);
+            default -> getJobAllgemeinSkull(displayName, lore);
+        };
+    }
+
+    private static ItemStack getJobWoodSkull(String displayName, List<String> lore) {
+        String b64 = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzEyYzM0MTQzYjljNzZhY2ZmY2M0MDAzN2I3MWQ3OGVhYTQ1ODRiNDYwNDUwN2IwN2VhMjRkOTMwYTM2Nzc0MyJ9fX0=";
+        ItemStack skull = get(b64);
+        return setDisplayName(skull, displayName, lore);
+    }
+
+    private static ItemStack getJobFishSkull(String displayName, List<String> lore) {
+        String b64 = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNWQ3MzFlMGU4YmYwNjI5NjVlODkwNGU5ZWZjMWZkZTMxM2NmODRkNTMxNDg3YzI2Njg2NDk5MGJkY2NkN2I1NCJ9fX0=";
+        ItemStack skull = get(b64);
+        return setDisplayName(skull, displayName, lore);
+    }
+
+    private static ItemStack getJobHuntSkull(String displayName, List<String> lore) {
+        String b64 = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmFhOTUyOTFmOTNhNzBkYjZmMWFhMWViODQ4MjRiOWRmM2I5ZmMwYTI1NDZmN2ZmODFhMTJjNTY3NjBmZWFhIn19fQ==";
+        ItemStack skull = get(b64);
+        return setDisplayName(skull, displayName, lore);
+    }
+
+    private static ItemStack getJobButcherSkull(String displayName, List<String> lore) {
+        String b64 = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTFjZmM3YzUzYjdiNzBiNTI2ZmIxNWZkYjJiYjM1NzljZDk3YTg5NTRlNzEyODIwYmFiNmJkM2JjYmJhOWM0In19fQ==";
+        ItemStack skull = get(b64);
+        return setDisplayName(skull, displayName, lore);
+    }
+
+    private static ItemStack getJobMinerSkull(String displayName, List<String> lore) {
+        String b64 = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNGQzMTZhNjQwOTlkODk2ZjY2OWQwZjA4ODUyMDIxN2E4M2RlY2Q0YTNiNjdlNTdhZjg5YjMzZDIwYzMyMWYzNCJ9fX0=";
+        ItemStack skull = get(b64);
+        return setDisplayName(skull, displayName, lore);
+    }
+
+    private static ItemStack getJobAllgemeinSkull(String displayName, List<String> lore) {
+        String b64 = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTZiYjlmYjk3YmE4N2NiNzI3Y2QwZmY0NzdmNzY5MzcwYmVhMTljY2JmYWZiNTgxNjI5Y2Q1NjM5ZjJmZWMyYiJ9fX0=";
+        ItemStack skull = get(b64);
+        return setDisplayName(skull, displayName, lore);
+    }
 }
