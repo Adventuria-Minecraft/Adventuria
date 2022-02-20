@@ -12,6 +12,7 @@
         <module>bootstrap</module>
         <module>common</module>
         <module>economy</module>
+        <module>job</module>
     </modules>
 
     <name>Adventuria</name>
