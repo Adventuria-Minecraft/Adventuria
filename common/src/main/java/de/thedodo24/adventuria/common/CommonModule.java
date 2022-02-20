@@ -10,6 +10,7 @@ import de.thedodo24.adventuria.common.utils.Language;
 import de.thedodo24.adventuria.common.utils.Ontime;
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.text.SimpleDateFormat;
@@ -30,6 +31,10 @@ public class CommonModule extends Module {
     private long nextWeek;
     private SimpleDateFormat dateFormat;
 
+    private final NamespacedKey inventoryType = new NamespacedKey(getPlugin(), "inventory-type");
+    private final NamespacedKey inventoryKey = new NamespacedKey(getPlugin(), "inventory-key");
+    private final NamespacedKey clickableItemKey = new NamespacedKey(getPlugin(), "clickable-key");
+
 
     public CommonModule(ModuleSettings settings, ModuleManager manager, JavaPlugin plugin) {
         super(settings, manager, plugin);
@@ -41,12 +46,14 @@ public class CommonModule extends Module {
         Language.init();
         dateFormat = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SS");
         setTimes();
+        getManager().getJobManager().createJobs();
         if(Bukkit.getOnlinePlayers().size() > 0) {
             Bukkit.getOnlinePlayers().forEach(all -> getPlayerOnline().put(all.getUniqueId(), System.currentTimeMillis()));
         }
         registerListener(new PlayerListener());
         registerCommands();
     }
+
 
     private void registerCommands() {
         new OntimeCommand();
