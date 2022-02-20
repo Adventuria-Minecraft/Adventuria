@@ -49,3 +49,13 @@ ontime-help: "§a/ontime <[Spieler]/history/top> <Spieler>"
 ontime-self: "Du hast folgende §aOntime§7:\n§7» Insgesamt: §a{0}\n§7» Diese Woche: §a{1}\n§7» Heute: §a{2}\n§7» AFK-Zeit: §a{3}"
 ontime-others: "§a{0} §7hat folgende §aOntime§7:\n§7» Insgesamt: §a{1}\n§7» Diese Woche: §a{2}\n§7» Heute: §a{3}\n§7» AFK-Zeit: §a{4}"
 
+#|----------|
+#    JOB
+#|----------|
+job-prefix: "§7§l| §9Job §7» "
+
+job-help: "§9/job §7| Öffnet das Job GUI"
+job-cancel: "Du hast den Job §9{0} §7gekündigt und hast nun keinen Job mehr."
+job-cancel-error: "Du hast keinen Job der gekündigt werden kann."
+job-new: "Du hast den Job §9{0} §7angenommen."
+job-changed: "Du hast deinen alten Job §9{1} §7gekündigt und den neuen Job §9{0} §7angenommen."

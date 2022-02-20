@@ -17,6 +17,8 @@ commands:
   adventuria:
     description: "Management command for plugin"
     permission: advi.manage
+  job:
+    description: "Job system. Type '/job help' for help"
 
 permissions:
   money.*:

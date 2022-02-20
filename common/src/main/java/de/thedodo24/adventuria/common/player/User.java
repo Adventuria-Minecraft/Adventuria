@@ -1,12 +1,16 @@
 package de.thedodo24.adventuria.common.player;
 
 import com.arangodb.entity.BaseDocument;
+import com.google.common.collect.Lists;
 import de.thedodo24.adventuria.common.CommonModule;
 import de.thedodo24.adventuria.common.arango.ArangoWritable;
+import de.thedodo24.adventuria.common.job.JobType;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class User implements ArangoWritable<UUID> {
 
@@ -26,6 +30,10 @@ public class User implements ArangoWritable<UUID> {
                 put("afkTime", new HashMap<>());
                 put("ontime", new HashMap<>());
             }});
+        }});
+        values.put("job", new HashMap<String, Object>() {{
+            put("activeJobs", Lists.newArrayList(100L));
+            JobType.jobTypes().forEach(jobType -> put(jobType.toString(), 0L));
         }});
     }
 
@@ -236,6 +244,61 @@ public class User implements ArangoWritable<UUID> {
         ontimeHistoryMap.replace("afkTime", newAfkTimeHistoryMap);
     }
 
+    //JOBS
+
+    private HashMap<String, Object> jobParent() {
+        return (HashMap<String, Object>) getProperty("job");
+    }
+
+    private Object getJobProperty(String property) {
+        return jobParent().get(property);
+    }
+
+    private <Type> void updateJobProperty(String property, Type value) {
+        HashMap<String, Object> jobParent = jobParent();
+        if(jobParent.containsKey(property))
+            jobParent.replace(property, value);
+        else
+            jobParent.put(property, value);
+        updateProperty("job", jobParent);
+    }
+
+    public boolean hasIndividualJob() {
+        return getActiveJobs().stream().anyMatch(j -> j != 100 && j != 200 && j != 300);
+    }
+
+    public List<Integer> getActiveJobs() {
+        return ((List<Long>) getJobProperty("activeJobs")).stream().map(Math::toIntExact).collect(Collectors.toList());
+    }
+
+    public List<Long> getActiveJobsLong() {
+        return ((List<Long>) getJobProperty("activeJobs"));
+    }
+
+    public JobType getIndividualJob() {
+        return JobType.byId(getActiveJobs().stream().filter(j -> j != 100 && j != 200 && j != 300).findAny().get());
+    }
+
+    public int getXP(JobType jobType) {
+        return Math.toIntExact((long) getJobProperty(jobType.toString()));
+    }
+
+    public void setXP(JobType jobType, int xp) {
+        updateJobProperty(jobType.toString(), (long) xp);
+    }
+
+    public void removeJob(JobType jobType) {
+        List<Long> activeJobs = getActiveJobsLong();
+        activeJobs.remove(jobType.getId().longValue());
+        updateJobProperty("activeJobs", activeJobs);
+    }
+
+    public void addJob(JobType jobType) {
+        List<Long> activeJobsLong = getActiveJobsLong();
+        if(!activeJobsLong.contains(jobType.getId().longValue()))
+            activeJobsLong.add(jobType.getId().longValue());
+        updateJobProperty("activeJobs", activeJobsLong);
+    }
 
 
 }
