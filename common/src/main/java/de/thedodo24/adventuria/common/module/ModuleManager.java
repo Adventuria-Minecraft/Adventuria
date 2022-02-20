@@ -1,6 +1,7 @@
 package de.thedodo24.adventuria.common.module;
 
 import com.arangodb.ArangoDatabase;
+import de.thedodo24.adventuria.common.job.JobManager;
 import de.thedodo24.adventuria.common.player.UserManager;
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -16,6 +17,7 @@ public class ModuleManager {
 
 
     private UserManager userManager;
+    private JobManager jobManager;
 
     public ModuleManager(ArangoDatabase database, JavaPlugin plugin) {
         this.plugin = plugin;
@@ -23,6 +25,7 @@ public class ModuleManager {
         this.modules = new HashMap<>();
 
         this.userManager = new UserManager(database);
+        this.jobManager = new JobManager(database);
 
     }
 
