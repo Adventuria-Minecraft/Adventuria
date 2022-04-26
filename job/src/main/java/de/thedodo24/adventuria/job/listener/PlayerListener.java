@@ -21,6 +21,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.util.HashMap;
+import java.util.List;
+
 public class PlayerListener implements Listener {
 
     private final String prefix = Language.get("job-prefix");
@@ -40,8 +43,13 @@ public class PlayerListener implements Listener {
                         ItemMeta meta = itemStack.getItemMeta();
                         if(meta.getPersistentDataContainer().has(CommonModule.getInstance().getClickableItemKey(), PersistentDataType.STRING)) {
                             String key = meta.getPersistentDataContainer().get(CommonModule.getInstance().getClickableItemKey(), PersistentDataType.STRING);
-                            ClickableItem clickableItem = ClickableItem.getClickableItems().get(key);
-                            ClickableItem.getClickableItems().remove(key);
+                            HashMap<String, ClickableItem> clickableItems = ClickableItem.getClickableItems().get(p.getUniqueId().toString());
+                            ClickableItem clickableItem = clickableItems.get(key);
+                            clickableItems.remove(key);
+                            if(clickableItems.size() == 0)
+                                ClickableItem.getClickableItems().remove(p.getUniqueId().toString());
+                            else
+                                ClickableItem.getClickableItems().replace(p.getUniqueId().toString(), clickableItems);
 
                             switch (simpleInventory.getSimpleInventoryType()) {
                                 case JOB_MENU -> {
@@ -51,7 +59,7 @@ public class PlayerListener implements Listener {
                                             Inventory nextRealInventory = nextInventory.getInventory();
                                             int i = 11;
                                             for(JobType jobType : JobType.realJobTypes()) {
-                                                ClickableItem clickableJobItem = new ClickableItem(SkullItems.getJobSkull(jobType, "§9" + jobType.getName(), Lists.newArrayList()), "job-" + jobType, null);
+                                                ClickableItem clickableJobItem = new ClickableItem(SkullItems.getJobSkull(jobType, "§9" + jobType.getName(), Lists.newArrayList()), "job-" + jobType, null, p.getUniqueId());
                                                 nextRealInventory.setItem(i, clickableJobItem.getItemStack());
                                                 i++;
                                             }

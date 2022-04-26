@@ -38,6 +38,7 @@ public class Ontime {
                     user.setDayOntime(0);
                 }
             });
+            CommonModule.getInstance().setTimes();
         } else if(currentTime >= CommonModule.getInstance().getNextDay()) {
             CommonModule.getInstance().getManager().getUserManager().getUsers().forEach(user -> {
                 if(CommonModule.getInstance().getPlayerOnline().containsKey(user.getKey())) {
