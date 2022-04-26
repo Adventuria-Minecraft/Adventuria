@@ -104,10 +104,10 @@ public class SkullItems {
         return setDisplayName(skull, displayName);
     }
 
-    public static ItemStack getRedMinusSkull(String displayName) {
+    public static ItemStack getRedMinusSkull(String displayName, List<String> lore) {
         String b64 = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNGU0YjhiOGQyMzYyYzg2NGUwNjIzMDE0ODdkOTRkMzI3MmE2YjU3MGFmYmY4MGMyYzViMTQ4Yzk1NDU3OWQ0NiJ9fX0=";
         ItemStack skull = get(b64);
-        return setDisplayName(skull, displayName);
+        return setDisplayName(skull, displayName, lore);
     }
 
     public static ItemStack getArrowUpSkull(String displayName) {
@@ -236,4 +236,12 @@ public class SkullItems {
         ItemStack skull = get(b64);
         return setDisplayName(skull, displayName, lore);
     }
+
+    public static ItemStack getGreenCheckMark(String displayName, List<String> lore) {
+        String b64 = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDMxMmNhNDYzMmRlZjVmZmFmMmViMGQ5ZDdjYzdiNTVhNTBjNGUzOTIwZDkwMzcyYWFiMTQwNzgxZjVkZmJjNCJ9fX0=";
+        ItemStack skull = get(b64);
+        return setDisplayName(skull, displayName, lore);
+    }
+
 }
+

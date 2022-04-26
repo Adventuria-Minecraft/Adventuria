@@ -9,6 +9,7 @@ import de.thedodo24.adventuria.common.inventory.SimpleInventoryTypes;
 import de.thedodo24.adventuria.common.job.JobManager;
 import de.thedodo24.adventuria.common.job.JobType;
 import de.thedodo24.adventuria.common.player.User;
+import de.thedodo24.adventuria.common.quests.Quest;
 import de.thedodo24.adventuria.common.utils.Language;
 import de.thedodo24.adventuria.common.utils.SkullItems;
 import org.bukkit.Sound;
@@ -16,6 +17,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -100,6 +102,8 @@ public class PlayerListener implements Listener {
                                                 p.sendMessage(prefix + Language.get("job-new", jobType.getName()));
                                             else
                                                 p.sendMessage(prefix + Language.get("job-changed", jobType.getName(), individualJob.getName()));
+                                            List<Quest> newQuests = user.getJobQuests(user.getIndividualJob());
+                                            p.sendMessage(prefix + Language.get("job-new-quest", newQuests.get(0).getQuestText(), newQuests.get(1).getQuestText()));
                                         }
                                     }
                                 }
@@ -108,6 +112,17 @@ public class PlayerListener implements Listener {
                     }
                 }
                 e.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onInventoryClose(InventoryCloseEvent e) {
+        Inventory inventory = e.getInventory();
+        if (InventoryManager.checkInventory(inventory)) {
+            SimpleInventory simpleInventory = InventoryManager.getSimpleInventory(inventory);
+            if (simpleInventory != null) {
+                InventoryManager.getSimpleInventories().remove(simpleInventory.getInventoryKey());
             }
         }
     }

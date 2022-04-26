@@ -13,20 +13,20 @@ import java.util.Optional;
 public enum JobType {
 
 
-    WOOD("Holzfäller", 1),
-    FISH("Fischer", 2),
-    HUNT("Jäger", 3),
-    BUTCHER("Metzger", 4),
-    MINER("Bergarbeiter", 5),
-    GENERAL("Allgemein", 100),
-    EXTRA("Extra", 200),
-    EVENT("Event", 300);
+    WOOD("Holzfäller", 1L),
+    FISH("Fischer", 2L),
+    HUNT("Jäger", 3L),
+    BUTCHER("Metzger", 4L),
+    MINER("Bergarbeiter", 5L),
+    GENERAL("Allgemein", 100L),
+    EXTRA("Extra", 200L),
+    EVENT("Event", 300L);
 
 
     private String name;
-    private Integer id;
+    private Long id;
 
-    JobType(String name, Integer id) {
+    JobType(String name, Long id) {
         this.name = name;
         this.id = id;
     }

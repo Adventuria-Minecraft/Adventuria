@@ -6,7 +6,7 @@ prefix: Adventuria
 loadbefore: [ Essentials ]
 softdepend: [ Vault ]
 depend: [ Essentials ]
-authors: [ TheDodo24 ]
+author: TheDodo24
 description: Adventuria system plugin
 
 commands:
@@ -19,6 +19,8 @@ commands:
     permission: advi.manage
   job:
     description: "Job system. Type '/job help' for help"
+  quest:
+    description: "Quest overview"
 
 permissions:
   money.*:

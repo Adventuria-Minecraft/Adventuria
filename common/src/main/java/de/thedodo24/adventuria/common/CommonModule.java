@@ -52,14 +52,25 @@ public class CommonModule extends Module {
         }
         registerListener(new PlayerListener());
         registerCommands();
+        startScheduler();
     }
+
+    private void startScheduler() {
+        Bukkit.getScheduler().scheduleAsyncRepeatingTask(getPlugin(), this::checkTimes, 20, 20);
+    }
+
+    private void checkTimes() {
+        getManager().getQuestManager().checkTime();
+        Ontime.checkTime();
+    }
+
 
 
     private void registerCommands() {
         new OntimeCommand();
     }
 
-    private void setTimes() {
+    public void setTimes() {
         getPlugin().getLogger().log(Level.INFO, "Setted next day to " + dateFormat.format(new Date(setNextDay())));
         getPlugin().getLogger().log(Level.INFO, "Setted next week to " + dateFormat.format(new Date(setNextWeek())));
     }
@@ -75,7 +86,7 @@ public class CommonModule extends Module {
         return nextDay;
     }
 
-    private long setNextWeek() {
+    public long setNextWeek() {
         Calendar calendar = Calendar.getInstance(Locale.GERMANY);
         calendar.add(Calendar.WEEK_OF_YEAR, 1);
         calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
@@ -89,7 +100,7 @@ public class CommonModule extends Module {
 
     @Override
     public void onDisable() {
-        Ontime.checkTime();
+        checkTimes();
         Bukkit.getOnlinePlayers().forEach(all -> {
             User u = CommonModule.getInstance().getManager().getUserManager().get(all.getUniqueId());
             long ontime = System.currentTimeMillis() - CommonModule.getInstance().getPlayerOnline().get(all.getUniqueId());

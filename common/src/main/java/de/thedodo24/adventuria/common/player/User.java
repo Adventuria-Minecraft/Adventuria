@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import de.thedodo24.adventuria.common.CommonModule;
 import de.thedodo24.adventuria.common.arango.ArangoWritable;
 import de.thedodo24.adventuria.common.job.JobType;
+import de.thedodo24.adventuria.common.quests.Quest;
 
 import java.util.HashMap;
 import java.util.List;
@@ -31,8 +32,17 @@ public class User implements ArangoWritable<UUID> {
                 put("ontime", new HashMap<>());
             }});
         }});
+        List<Long> extraQuests = CommonModule.getInstance().getManager().getQuestManager().getFinishedQuests(2,
+                CommonModule.getInstance().getManager().getQuestManager().getShuffledQuestList(JobType.GENERAL)).stream().map(Quest::getKey).toList();
+        HashMap<String, Boolean> extraHashMap = new HashMap<>();
+        for(Long eq : extraQuests) {
+            extraHashMap.put(String.valueOf(eq), false);
+        }
         values.put("job", new HashMap<String, Object>() {{
-            put("activeJobs", Lists.newArrayList(100L));
+            put("activeJobs", new HashMap<String, HashMap<String, Boolean>>(){{
+                put("100", new HashMap<>());
+                put("200", extraHashMap);
+            }});
             JobType.jobTypes().forEach(jobType -> put(jobType.toString(), 0L));
         }});
     }
@@ -267,12 +277,12 @@ public class User implements ArangoWritable<UUID> {
         return getActiveJobs().stream().anyMatch(j -> j != 100 && j != 200 && j != 300);
     }
 
-    public List<Integer> getActiveJobs() {
-        return ((List<Long>) getJobProperty("activeJobs")).stream().map(Math::toIntExact).collect(Collectors.toList());
+    private List<Integer> getActiveJobs() {
+        return ((HashMap<String, HashMap<String, Boolean>>) getJobProperty("activeJobs")).keySet().stream().map(Integer::parseInt).collect(Collectors.toList());
     }
 
-    public List<Long> getActiveJobsLong() {
-        return ((List<Long>) getJobProperty("activeJobs"));
+    private HashMap<String, HashMap<String, Boolean>> activeJobsParent() {
+        return ((HashMap<String, HashMap<String, Boolean>>) getJobProperty("activeJobs"));
     }
 
     public JobType getIndividualJob() {
@@ -288,17 +298,77 @@ public class User implements ArangoWritable<UUID> {
     }
 
     public void removeJob(JobType jobType) {
-        List<Long> activeJobs = getActiveJobsLong();
-        activeJobs.remove(jobType.getId().longValue());
-        updateJobProperty("activeJobs", activeJobs);
+        HashMap<String, HashMap<String, Boolean>> activeJobParent = activeJobsParent();
+        activeJobParent.remove(jobType.getId() + "");
+        updateJobProperty("activeJobs", activeJobParent);
     }
 
     public void addJob(JobType jobType) {
-        List<Long> activeJobsLong = getActiveJobsLong();
-        if(!activeJobsLong.contains(jobType.getId().longValue()))
-            activeJobsLong.add(jobType.getId().longValue());
-        updateJobProperty("activeJobs", activeJobsLong);
+        HashMap<String, HashMap<String, Boolean>> activeJobParent = activeJobsParent();
+        if(!activeJobParent.containsKey(""+ jobType.getId()))
+            activeJobParent.put(jobType.getId() + "", new HashMap<>(){{
+                List<Quest> shuffledQuestList = CommonModule.getInstance().getManager().getQuestManager().getShuffledQuestList(jobType);
+                put(shuffledQuestList.get(0).getKey() + "", false);
+                put(shuffledQuestList.get(1).getKey() + "", false);
+            }});
+        updateJobProperty("activeJobs", activeJobParent);
     }
 
+    private HashMap<Long, Boolean> getQuestList(long job) {
+        HashMap<String, HashMap<String, Boolean>> jobHashMap = (HashMap<String, HashMap<String, Boolean>>) getJobProperty("activeJobs");
+        HashMap<String, Boolean> stringBooleanHashMap = jobHashMap.get(String.valueOf(job));
+        HashMap<Long, Boolean> longBooleanHashMap = new HashMap<>();
+        stringBooleanHashMap.keySet().forEach(key -> longBooleanHashMap.put(Long.parseLong(key), stringBooleanHashMap.get(key)));
+        return longBooleanHashMap;
+    }
+
+
+    public List<Quest> getJobQuests(JobType type) {
+        HashMap<Long, Boolean> longQuestList = getQuestList(type.getId());
+        return longQuestList.keySet().stream().map(l -> CommonModule.getInstance().getManager().getQuestManager().get(l)).toList();
+    }
+
+    public void setJobQuests(JobType type, List<Quest> jobQuests) {
+        HashMap<String, HashMap<String, Boolean>> jobHashMap = (HashMap<String, HashMap<String, Boolean>>) getJobProperty("activeJobs");
+        HashMap<String, Boolean> questHashMap = new HashMap<>();
+        for(Quest q : jobQuests) {
+            questHashMap.put(q.getKey() + "", false);
+        }
+        jobHashMap.replace(type.getId() + "", questHashMap);
+        updateJobProperty("activeJobs", jobHashMap);
+    }
+
+    public void addFinishedQuest(Quest quest) {
+        HashMap<String, HashMap<String, Boolean>> jobHashMap = (HashMap<String, HashMap<String, Boolean>>) getJobProperty("activeJobs");
+        HashMap<String, Boolean> questList = jobHashMap.get(JobType.GENERAL.getId());
+        questList.put(quest.getKey() + "", true);
+        jobHashMap.replace(JobType.GENERAL.getId() + "", questList);
+        updateJobProperty("activeJobs", jobHashMap);
+    }
+
+    public void setFinishedQuest(Quest quest) {
+        HashMap<String, HashMap<String, Boolean>> jobHashMap = (HashMap<String, HashMap<String, Boolean>>) getJobProperty("activeJobs");
+        HashMap<String, Boolean> questList = jobHashMap.get(JobType.GENERAL.getId() + "");
+        questList.replace(quest.getKey() + "", true);
+        jobHashMap.replace(JobType.GENERAL.getId() + "", questList);
+        updateJobProperty("activeJobs", jobHashMap);
+    }
+
+    public boolean checkFinishedQuest(Quest quest) {
+        HashMap<String, HashMap<String, Boolean>> jobHashMap = (HashMap<String, HashMap<String, Boolean>>) getJobProperty("activeJobs");
+        HashMap<String, Boolean> questList = jobHashMap.get("" + quest.getJobType().getId());
+        if(questList != null) {
+            if (questList.containsKey(quest.getKey() + "")) {
+                return questList.get(quest.getKey() + "");
+            }
+        }
+        return false;
+    }
+
+    public void clearFinishedQuests() {
+        HashMap<String, HashMap<String, Boolean>> jobHashMap = (HashMap<String, HashMap<String, Boolean>>) getJobProperty("activeJobs");
+        jobHashMap.replace("" + JobType.GENERAL.getId(), new HashMap<>());
+        updateJobProperty("activeJobs", jobHashMap);
+    }
 
 }

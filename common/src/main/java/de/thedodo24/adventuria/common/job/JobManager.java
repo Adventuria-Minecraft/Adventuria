@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Getter
-public class JobManager extends CollectionManager<Job, Integer> {
+public class JobManager extends CollectionManager<Job, Long> {
 
     private ArangoDatabase database;
 
@@ -27,7 +27,7 @@ public class JobManager extends CollectionManager<Job, Integer> {
                 null, null, VPackSlice.class);
         List<Job> bans = Lists.newArrayList();
         while(cursor.hasNext())
-            bans.add(getOrGenerate(Integer.parseInt(cursor.next().get("id").getAsString())));
+            bans.add(getOrGenerate(Long.parseLong(cursor.next().get("id").getAsString())));
         this.closeCursor(cursor);
         return bans;
     }
@@ -40,9 +40,9 @@ public class JobManager extends CollectionManager<Job, Integer> {
         if(type != null) {
             ArangoCursor<VPackSlice> cursor = getDatabase().query("FOR job IN " + this.collection.name() + " FILTER LIKE (job.type, @name, true) RETURN {id: job._key}",
                     new MapBuilder().put("name", type.toString()).get(), null, VPackSlice.class);
-            int id = -1;
+            long id = -1;
             while(cursor.hasNext())
-                id = Integer.parseInt(cursor.next().get("id").getAsString());
+                id = Long.parseLong(cursor.next().get("id").getAsString());
             this.closeCursor(cursor);
             if(id >= 0) {
                 return get(id);

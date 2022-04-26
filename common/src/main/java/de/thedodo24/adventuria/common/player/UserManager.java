@@ -54,6 +54,10 @@ public class UserManager extends CollectionManager<User, UUID> {
         return list;
     }
 
+    public List<User> getUsersIndividualJob() {
+        return getUsers().stream().filter(User::hasIndividualJob).toList();
+    }
+
     public LinkedHashMap<User, Long> getHighestMoney() {
         List<User> users = getUsers();
         HashMap<UUID, Long> totalAmount = new HashMap<>();

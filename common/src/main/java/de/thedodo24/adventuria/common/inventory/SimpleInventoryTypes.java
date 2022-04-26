@@ -7,13 +7,15 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
 public enum SimpleInventoryTypes {
 
     JOB_MENU(new ItemBuilder(new ItemStack(Material.GRAY_STAINED_GLASS_PANE, 1)).modify().setDisplayName(" ").setKey("JOB_MENU").build()),
-    JOB_GET_NEW(new ItemBuilder(new ItemStack(Material.GRAY_STAINED_GLASS_PANE, 1)).modify().setDisplayName(" ").setKey("JOB_GET_NEW").build());
+    JOB_GET_NEW(new ItemBuilder(new ItemStack(Material.GRAY_STAINED_GLASS_PANE, 1)).modify().setDisplayName(" ").setKey("JOB_GET_NEW").build()),
+    QUEST_MENU(new ItemBuilder(new ItemStack(Material.GRAY_STAINED_GLASS_PANE, 1)).modify().setDisplayName(" ").setKey("QUEST_MENU").build());
 
     @Getter
     private final ItemStack checkItemStack;
@@ -24,7 +26,7 @@ public enum SimpleInventoryTypes {
     }
 
     public static List<String> getKeys() {
-        return Lists.newArrayList("JOB_MENU", "JOB_GET_NEW");
+        return Arrays.stream(values()).map(Enum::toString).toList();
     }
 
 }

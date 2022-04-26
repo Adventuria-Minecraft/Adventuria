@@ -44,10 +44,10 @@ public class JobCommand implements CommandExecutor, TabCompleter {
                 simpleInventory.insertGlassPane(glassPanes, simpleInventory.getInventoryKey());
                 getNewJob.insertGlassPane(newJobsGlassPanes, getNewJob.getInventoryKey());
 
-                ClickableItem newJob = new ClickableItem(SkullItems.getGreenPlusSkull("§aNeuer Job"), "new-job", getNewJob);
+                ClickableItem newJob = new ClickableItem(SkullItems.getGreenPlusSkull("§aNeuer Job"), "new-job", getNewJob, p.getUniqueId());
 
-                ClickableItem changeJob = new ClickableItem(SkullItems.getOrangeNewJob("§6Job wechseln"), "change-job", getNewJob);
-                ClickableItem deleteJob = new ClickableItem(SkullItems.getRedMinusSkull("§cJob kündigen"), "remove-job", null);
+                ClickableItem changeJob = new ClickableItem(SkullItems.getOrangeNewJob("§6Job wechseln"), "change-job", getNewJob, p.getUniqueId());
+                ClickableItem deleteJob = new ClickableItem(SkullItems.getRedMinusSkull("§cJob kündigen", Lists.newArrayList()), "remove-job", null, p.getUniqueId());
 
                 ItemStack jobSkull;
                 JobType jobType;
