@@ -1,12 +1,11 @@
 package de.thedodo24.adventuria.job;
 
-import de.thedodo24.adventuria.common.CommonModule;
 import de.thedodo24.adventuria.common.module.Module;
 import de.thedodo24.adventuria.common.module.ModuleManager;
 import de.thedodo24.adventuria.common.module.ModuleSettings;
 import de.thedodo24.adventuria.job.commands.JobCommand;
 import de.thedodo24.adventuria.job.commands.QuestCommand;
-import de.thedodo24.adventuria.job.listener.PlayerListener;
+import de.thedodo24.adventuria.job.listener.InventoryListener;
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -29,6 +28,6 @@ public class JobModule extends Module {
     public void onEnable() {
         new JobCommand();
         new QuestCommand();
-        registerListener(new PlayerListener());
+        registerListener(new InventoryListener());
     }
 }

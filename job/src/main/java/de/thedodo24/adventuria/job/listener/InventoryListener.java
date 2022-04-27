@@ -5,8 +5,6 @@ import de.thedodo24.adventuria.common.CommonModule;
 import de.thedodo24.adventuria.common.inventory.ClickableItem;
 import de.thedodo24.adventuria.common.inventory.InventoryManager;
 import de.thedodo24.adventuria.common.inventory.SimpleInventory;
-import de.thedodo24.adventuria.common.inventory.SimpleInventoryTypes;
-import de.thedodo24.adventuria.common.job.JobManager;
 import de.thedodo24.adventuria.common.job.JobType;
 import de.thedodo24.adventuria.common.player.User;
 import de.thedodo24.adventuria.common.quests.Quest;
@@ -26,7 +24,7 @@ import org.bukkit.persistence.PersistentDataType;
 import java.util.HashMap;
 import java.util.List;
 
-public class PlayerListener implements Listener {
+public class InventoryListener implements Listener {
 
     private final String prefix = Language.get("job-prefix");
 
