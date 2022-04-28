@@ -354,10 +354,10 @@ public class User implements ArangoWritable<UUID> {
         updateJobProperty("activeJobs", jobHashMap);
     }
 
-    public void addQuestProgress(Quest quest) {
+    public void addQuestProgress(Quest quest, long progress) {
         HashMap<String, HashMap<String, Long>> jobHashMap = (HashMap<String, HashMap<String, Long>>) getJobProperty("activeJobs");
         HashMap<String, Long> questList = jobHashMap.get(quest.getJobType().getId() + "");
-        questList.replace(quest.getKey() + "", questList.get(quest.getKey() + "") + 1);
+        questList.replace(quest.getKey() + "", questList.get(quest.getKey() + "") + progress);
         jobHashMap.replace(quest.getJobType().getId() + "", questList);
         updateJobProperty("activeJobs", jobHashMap);
     }
