@@ -1,17 +1,21 @@
 package de.thedodo24.adventuria.common.player;
 
 import com.arangodb.entity.BaseDocument;
-import com.google.common.collect.Lists;
 import de.thedodo24.adventuria.common.CommonModule;
 import de.thedodo24.adventuria.common.arango.ArangoWritable;
 import de.thedodo24.adventuria.common.job.JobType;
+import de.thedodo24.adventuria.common.quests.CheckQuest;
+import de.thedodo24.adventuria.common.quests.CollectQuest;
 import de.thedodo24.adventuria.common.quests.Quest;
+import de.thedodo24.adventuria.common.quests.QuestType;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class User implements ArangoWritable<UUID> {
 
@@ -32,15 +36,40 @@ public class User implements ArangoWritable<UUID> {
                 put("ontime", new HashMap<>());
             }});
         }});
-        List<Long> extraQuests = CommonModule.getInstance().getManager().getQuestManager().getFinishedQuests(2,
-                CommonModule.getInstance().getManager().getQuestManager().getShuffledQuestList(JobType.GENERAL)).stream().map(Quest::getKey).toList();
-        HashMap<String, Long> extraHashMap = new HashMap<>();
-        for(Long eq : extraQuests) {
-            extraHashMap.put(String.valueOf(eq), 0L);
+        List<Quest> extraQuests = CommonModule.getInstance().getManager().getQuestManager().getFinishedQuests(2,
+                CommonModule.getInstance().getManager().getQuestManager().getShuffledQuestList(JobType.GENERAL)).stream().toList();
+        HashMap<String, Object> extraHashMap = new HashMap<>();
+        for(Quest eq : extraQuests) {
+            if(eq.getQuestType().equals(QuestType.COLLECT)) {
+                CollectQuest cq = eq.toCollectQuest();
+                if(!cq.isCountedAsAll()) {
+                    HashMap<String, Long> materialList = new HashMap<>();
+                    cq.getCollectMap().keySet().forEach(m -> materialList.put(m.toString(), 0L));
+                    extraHashMap.put(String.valueOf(cq.getKey()), materialList);
+                } else {
+                    extraHashMap.put(String.valueOf(cq.getKey()), 0L);
+                }
+            } else
+                extraHashMap.put(eq.getKey() + "", false);
+        }
+        HashMap<String, Object> generalHashMap = new HashMap<>();
+        List<Quest> activeGeneralQuests = CommonModule.getInstance().getManager().getJobManager().getJob(JobType.GENERAL).getActiveQuests();
+        for(Quest gq : activeGeneralQuests) {
+            if(gq.getQuestType().equals(QuestType.COLLECT)) {
+                CollectQuest cq = gq.toCollectQuest();
+                if(!cq.isCountedAsAll()) {
+                    HashMap<String, Long> materialList = new HashMap<>();
+                    cq.getCollectMap().keySet().forEach(m -> materialList.put(m.toString(), 0L));
+                    generalHashMap.put(String.valueOf(cq.getKey()), materialList);
+                } else {
+                    generalHashMap.put(String.valueOf(cq.getKey()), 0L);
+                }
+            } else
+                generalHashMap.put(gq.getKey() + "", false);
         }
         values.put("job", new HashMap<String, Object>() {{
-            put("activeJobs", new HashMap<String, HashMap<String, Long>>(){{
-                put("100", new HashMap<>());
+            put("activeJobs", new HashMap<String, HashMap<String, Object>>(){{
+                put("100", generalHashMap);
                 put("200", extraHashMap);
             }});
             JobType.jobTypes().forEach(jobType -> put(jobType.toString(), 0L));
@@ -274,19 +303,22 @@ public class User implements ArangoWritable<UUID> {
     }
 
     public boolean hasIndividualJob() {
-        return getActiveJobs().stream().anyMatch(j -> j != 100 && j != 200 && j != 300);
+        return getActiveJobs().stream().filter(j -> j != 100 && j != 200 && j != 300)
+                .anyMatch(j -> activeJobsParent().get(j + "").containsKey("active") && (long) activeJobsParent().get(j + "").get("active") == -1L);
     }
 
-    private List<Integer> getActiveJobs() {
-        return ((HashMap<String, HashMap<String, Long>>) getJobProperty("activeJobs")).keySet().stream().map(Integer::parseInt).collect(Collectors.toList());
+    private HashMap<String, HashMap<String, Object>> activeJobsParent() {
+        return ((HashMap<String, HashMap<String, Object>>) getJobProperty("activeJobs"));
     }
 
-    private HashMap<String, HashMap<String, Long>> activeJobsParent() {
-        return ((HashMap<String, HashMap<String, Long>>) getJobProperty("activeJobs"));
+
+    private List<Long> getActiveJobs() {
+        return activeJobsParent().keySet().stream().map(Long::parseLong).toList();
     }
 
     public JobType getIndividualJob() {
-        return JobType.byId(getActiveJobs().stream().filter(j -> j != 100 && j != 200 && j != 300).findAny().get());
+        return JobType.byId(getActiveJobs().stream().filter(j -> j != (long) JobType.GENERAL.getId() && j != (long) JobType.EXTRA.getId() && j != (long) JobType.EVENT.getId())
+                .filter(j -> activeJobsParent().get(j + "").containsKey("active") && (long) activeJobsParent().get(j + "").get("active") == -1L).findAny().get());
     }
 
     public int getXP(JobType jobType) {
@@ -297,96 +329,215 @@ public class User implements ArangoWritable<UUID> {
         updateJobProperty(jobType.toString(), (long) xp);
     }
 
+    public void addXP(JobType jobType, int xp) {
+        setXP(jobType, getXP(jobType) + xp);
+    }
+
     public void removeJob(JobType jobType) {
-        HashMap<String, HashMap<String, Long>> activeJobParent = activeJobsParent();
-        activeJobParent.remove(jobType.getId() + "");
+        HashMap<String, HashMap<String, Object>> activeJobParent = activeJobsParent();
+        HashMap<String, Object> jobParent = activeJobParent.get(jobType.getId() + "");
+        jobParent.replace("active", CommonModule.getInstance().getNextWeek());
+        activeJobParent.replace(jobType.getId()+"", jobParent);
         updateJobProperty("activeJobs", activeJobParent);
     }
 
     public void addJob(JobType jobType) {
-        HashMap<String, HashMap<String, Long>> activeJobParent = activeJobsParent();
-        if(!activeJobParent.containsKey(""+ jobType.getId()))
-            activeJobParent.put(jobType.getId() + "", new HashMap<>(){{
+        HashMap<String, HashMap<String, Object>> activeJobParent = activeJobsParent();
+        if(activeJobParent.containsKey("" + jobType.getId())) {
+            HashMap<String, Object> jobParent = activeJobParent.get(jobType.getId() + "");
+            long time = (long) jobParent.get("active");
+            if(time != -1) {
+                if(CommonModule.getInstance().getNextWeek() > time) {
+                    activeJobParent.remove(jobType.getId() + "");
+                } else {
+                    jobParent.replace("active", -1L);
+                    activeJobParent.replace(jobType.getId() + "", jobParent);
+                    updateJobProperty("activeJobs", activeJobParent);
+                    return;
+                }
+            }
+        }
+        activeJobParent.put(jobType.getId() + "", new HashMap<>() {{
+                put("active", -1L);
                 List<Quest> shuffledQuestList = CommonModule.getInstance().getManager().getQuestManager().getShuffledQuestList(jobType);
-                put(shuffledQuestList.get(0).getKey() + "", 0L);
-                put(shuffledQuestList.get(1).getKey() + "", 0L);
+                for (Quest shuffledQuest : shuffledQuestList) {
+                    if (shuffledQuest.getQuestType().equals(QuestType.COLLECT)) {
+                        CollectQuest collectShuffledQuest = shuffledQuest.toCollectQuest();
+                        if (!collectShuffledQuest.isCountedAsAll()) {
+                            HashMap<String, Long> materialList = new HashMap<>();
+                            collectShuffledQuest.getCollectMap().keySet().forEach(m -> materialList.put(m.toString(), 0L));
+                            put(String.valueOf(collectShuffledQuest.getKey()), materialList);
+                        } else {
+                            put(String.valueOf(collectShuffledQuest.getKey()), 0L);
+                        }
+                    } else {
+                        put(shuffledQuest.getKey() + "", false);
+                    }
+                }
             }});
         updateJobProperty("activeJobs", activeJobParent);
     }
 
-    private HashMap<Long, Long> getQuestList(long job) {
-        HashMap<String, HashMap<String, Long>> jobHashMap = (HashMap<String, HashMap<String, Long>>) getJobProperty("activeJobs");
-        HashMap<String, Long> stringBooleanHashMap = jobHashMap.get(String.valueOf(job));
-        HashMap<Long, Long> longBooleanHashMap = new HashMap<>();
-        stringBooleanHashMap.keySet().forEach(key -> longBooleanHashMap.put(Long.parseLong(key), stringBooleanHashMap.get(key)));
+    private HashMap<String, Object> questList(long job) {
+        HashMap<String, HashMap<String, Object>> jobHashMap = activeJobsParent();
+        HashMap<String, Object> stringBooleanHashMap = jobHashMap.get(String.valueOf(job));
+        HashMap<String, Object> longBooleanHashMap = new HashMap<>();
+        stringBooleanHashMap.keySet().forEach(key -> longBooleanHashMap.put(key, stringBooleanHashMap.get(key)));
         return longBooleanHashMap;
+    }
+
+    private void updateQuestList(HashMap<String, Object> questObjectMap, long job) {
+        HashMap<String, HashMap<String, Object>> jobHashMap = activeJobsParent();
+        jobHashMap.replace(job + "", questObjectMap);
+        updateProperty("activeJobs", jobHashMap);
     }
 
 
     public List<Quest> getJobQuests(JobType type) {
-        HashMap<Long, Long> longQuestList = getQuestList(type.getId());
-        return longQuestList.keySet().stream().map(l -> CommonModule.getInstance().getManager().getQuestManager().get(l)).toList();
+        HashMap<String, Object> longQuestList = questList(type.getId());
+        return longQuestList.keySet().stream().filter(key -> !key.equalsIgnoreCase("active"))
+                .map(q -> CommonModule.getInstance().getManager().getQuestManager().get(Long.parseLong(q))).toList();
     }
 
     public void setJobQuests(JobType type, List<Quest> jobQuests) {
-        HashMap<String, HashMap<String, Long>> jobHashMap = (HashMap<String, HashMap<String, Long>>) getJobProperty("activeJobs");
-        HashMap<String, Long> questHashMap = new HashMap<>();
+        HashMap<String, Object> questHashMap = new HashMap<>();
         for(Quest q : jobQuests) {
-            questHashMap.put(q.getKey() + "", 0L);
+            if(q.getQuestType().equals(QuestType.COLLECT)) {
+                CollectQuest cq = q.toCollectQuest();
+                HashMap<String, Long> materialMap = new HashMap<>();
+                if(!cq.isCountedAsAll()) {
+                    cq.getCollectMap().keySet().forEach(m -> materialMap.put(m.toString(), 0L));
+                    questHashMap.put(cq.getKey() + "", materialMap);
+                } else {
+                    questHashMap.put(cq.getKey() + "", 0L);
+                }
+            } else
+                questHashMap.put(q.getKey() + "", false);
         }
-        jobHashMap.replace(type.getId() + "", questHashMap);
-        updateJobProperty("activeJobs", jobHashMap);
+        updateQuestList(questHashMap, type.getId());
     }
 
-    public void addFinishedQuest(Quest quest) {
-        HashMap<String, HashMap<String, Long>> jobHashMap = (HashMap<String, HashMap<String, Long>>) getJobProperty("activeJobs");
-        HashMap<String, Long> questList = jobHashMap.get(JobType.GENERAL.getId() + "");
-        questList.put(quest.getKey() + "", -1L);
-        jobHashMap.replace(JobType.GENERAL.getId() + "", questList);
-        updateJobProperty("activeJobs", jobHashMap);
+    public void updateFinishedQuest(Quest quest, boolean value) {
+        if(quest.getQuestType().equals(QuestType.COLLECT)) {
+            HashMap<String, Object> questList = questList(quest.getJobType().getId());
+            questList.replace(quest.getKey() + "", value);
+            updateQuestList(questList, quest.getJobType().getId());
+        }
     }
 
     public void setQuestProgress(Quest quest, long progress) {
-        HashMap<String, HashMap<String, Long>> jobHashMap = (HashMap<String, HashMap<String, Long>>) getJobProperty("activeJobs");
-        HashMap<String, Long> questList = jobHashMap.get(quest.getJobType().getId() + "");
-        questList.replace(quest.getKey() + "", progress);
-        jobHashMap.replace(quest.getJobType().getId() + "", questList);
-        updateJobProperty("activeJobs", jobHashMap);
+        if(quest.getQuestType().equals(QuestType.COLLECT)) {
+            CollectQuest cq = quest.toCollectQuest();
+            HashMap<String, Object> questList = questList(quest.getJobType().getId());
+                questList.replace(quest.getKey() + "", progress);
+                updateQuestList(questList, quest.getJobType().getId());
+        }
+    }
+
+    public void setQuestProgress(Quest quest, long progress, Material material) {
+        if(quest.getQuestType().equals(QuestType.COLLECT)) {
+            CollectQuest cq = quest.toCollectQuest();
+            HashMap<String, Object> questList = questList(quest.getJobType().getId());
+            if(!cq.isCountedAsAll()) {
+                HashMap<Material, Long> materialLongMap = (HashMap<Material, Long>) questList.get(quest);
+                materialLongMap.replace(material, progress);
+                questList.replace(quest.getKey() + "", materialLongMap);
+                updateQuestList(questList, quest.getJobType().getId());
+            }
+        }
     }
 
     public void addQuestProgress(Quest quest, long progress) {
-        HashMap<String, HashMap<String, Long>> jobHashMap = (HashMap<String, HashMap<String, Long>>) getJobProperty("activeJobs");
-        HashMap<String, Long> questList = jobHashMap.get(quest.getJobType().getId() + "");
-        questList.replace(quest.getKey() + "", questList.get(quest.getKey() + "") + progress);
-        jobHashMap.replace(quest.getJobType().getId() + "", questList);
-        updateJobProperty("activeJobs", jobHashMap);
+        if(quest.getQuestType().equals(QuestType.COLLECT)) {
+            CollectQuest cq = quest.toCollectQuest();
+            HashMap<String, Object> questList = questList(quest.getJobType().getId());
+            if(cq.isCountedAsAll()) {
+                long p = (long) questList.get(quest.getKey() + "");
+                questList.replace(quest.getKey() + "", p + progress);
+                updateQuestList(questList, quest.getJobType().getId());
+            }
+        }
+    }
+
+    public void addQuestProgress(Quest quest, long progress, Material material) {
+        if(quest.getQuestType().equals(QuestType.COLLECT)) {
+            CollectQuest cq = quest.toCollectQuest();
+            HashMap<String, Object> questList = questList(quest.getJobType().getId());
+            if(!cq.isCountedAsAll()) {
+                Object o =questList.get(quest.getKey() + "");
+                if(o instanceof HashMap<?,?>) {
+                    HashMap<String, Long> materialLongMap = (HashMap<String, Long>) questList.get(quest.getKey() + "");
+                    long p = materialLongMap.get(material.toString());
+                    materialLongMap.replace(material.toString(), progress + p);
+                    questList.replace(quest.getKey() + "", materialLongMap);
+                    updateQuestList(questList, quest.getJobType().getId());
+                }
+            }
+        }
     }
 
     public long getQuestProgress(Quest quest) {
-        HashMap<String, HashMap<String, Long>> jobHashMap = (HashMap<String, HashMap<String, Long>>) getJobProperty("activeJobs");
-        HashMap<String, Long> questList = jobHashMap.get("" + quest.getJobType().getId());
-        if(questList != null) {
-            if (questList.containsKey(quest.getKey() + "")) {
-                return questList.get(quest.getKey() + "");
+        if(quest.getQuestType().equals(QuestType.COLLECT)) {
+            CollectQuest cq = quest.toCollectQuest();
+                HashMap<String, Object> questList = questList(quest.getJobType().getId());
+                if (questList.containsKey(quest.getKey() + "")) {
+                    Object o = questList.get(quest.getKey() + "");
+                    if(o instanceof Long) {
+                        long progress = (long) o;
+                        long max = cq.getCollectMap().get(cq.getCollectMap().keySet().stream().findFirst().get());
+                        return Math.min(progress, max);
+                    }
+                }
+        }
+        return 0L;
+    }
+    public long getQuestProgress(Quest quest, Material material) {
+        if(quest.getQuestType().equals(QuestType.COLLECT)) {
+            CollectQuest cq = quest.toCollectQuest();
+            if(!cq.isCountedAsAll()) {
+                HashMap<String, Object> questList = questList(quest.getJobType().getId());
+                if (questList.containsKey(quest.getKey() + "")) {
+                    HashMap<String, Long> materialLongMap = (HashMap<String, Long>) questList.get(quest.getKey() + "");
+                    long progress = materialLongMap.get(material.toString());
+                    long max = cq.getCollectMap().get(material);
+                    return Math.min(progress, max);
+                }
             }
         }
         return 0L;
     }
 
     public boolean checkFinishedQuest(Quest quest) {
-        HashMap<String, HashMap<String, Long>> jobHashMap = (HashMap<String, HashMap<String, Long>>) getJobProperty("activeJobs");
-        HashMap<String, Long> questList = jobHashMap.get("" + quest.getJobType().getId());
-        if(questList != null) {
+        if(quest.getQuestType().equals(QuestType.CHECK)) {
+            HashMap<String, Object> questList = questList(quest.getJobType().getId());
             if (questList.containsKey(quest.getKey() + "")) {
-                return questList.get(quest.getKey() + "") == -1L;
+                return (boolean) questList.get(quest.getKey() + "");
             }
+        } else if(quest.getQuestType().equals(QuestType.COLLECT)) {
+            CollectQuest cq = quest.toCollectQuest();
+            return getQuestProgress(cq) == -1L;
         }
         return false;
     }
 
-    public void clearFinishedQuests() {
-        HashMap<String, HashMap<String, Long>> jobHashMap = (HashMap<String, HashMap<String, Long>>) getJobProperty("activeJobs");
-        jobHashMap.replace("" + JobType.GENERAL.getId(), new HashMap<>());
+    public void clearGeneralQuests() {
+        HashMap<String, HashMap<String, Object>> jobHashMap = activeJobsParent();
+        HashMap<String, Object> generalHashMap = new HashMap<>();
+        List<Quest> activeGeneralQuests = CommonModule.getInstance().getManager().getJobManager().getJob(JobType.GENERAL).getActiveQuests();
+        for(Quest gq : activeGeneralQuests) {
+            if(gq.getQuestType().equals(QuestType.COLLECT)) {
+                CollectQuest cq = gq.toCollectQuest();
+                if(!cq.isCountedAsAll()) {
+                    HashMap<String, Long> materialList = new HashMap<>();
+                    cq.getCollectMap().keySet().forEach(m -> materialList.put(m.toString(), 0L));
+                    generalHashMap.put(String.valueOf(cq.getKey()), materialList);
+                } else {
+                    generalHashMap.put(String.valueOf(cq.getKey()), 0L);
+                }
+            } else
+                generalHashMap.put(gq.getKey() + "", false);
+        }
+        jobHashMap.replace("" + JobType.GENERAL.getId(), generalHashMap);
         updateJobProperty("activeJobs", jobHashMap);
     }
 
