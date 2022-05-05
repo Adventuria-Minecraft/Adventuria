@@ -2,10 +2,13 @@ package de.thedodo24.adventuria.job.commands;
 
 import com.google.common.collect.Lists;
 import de.thedodo24.adventuria.common.CommonModule;
+import de.thedodo24.adventuria.common.inventory.ClickableItem;
 import de.thedodo24.adventuria.common.inventory.SimpleInventory;
 import de.thedodo24.adventuria.common.inventory.SimpleInventoryTypes;
 import de.thedodo24.adventuria.common.job.JobType;
 import de.thedodo24.adventuria.common.player.User;
+import de.thedodo24.adventuria.common.quests.CheckQuest;
+import de.thedodo24.adventuria.common.quests.CollectQuest;
 import de.thedodo24.adventuria.common.quests.Quest;
 import de.thedodo24.adventuria.common.utils.Language;
 import de.thedodo24.adventuria.common.utils.SkullItems;
@@ -27,7 +30,7 @@ public class QuestCommand implements CommandExecutor, TabCompleter {
         cmd.setTabCompleter(this);
     }
 
-    private String prefix = Language.get("job-prefix");
+    private String prefix = Language.getLanguage().get("job-prefix");
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
@@ -42,11 +45,11 @@ public class QuestCommand implements CommandExecutor, TabCompleter {
                 List<ItemStack> extraToPlace = Lists.newArrayList();
                 int i = 1;
                 for(Quest q : generalQuests) {
-                    if(user.checkFinishedQuest(q)) {
-                        generalToPlace.add(SkullItems.getGreenCheckMark("§aAllgemeinaufgabe " + i, Lists.newArrayList("", "§9» Aufgabe:", q.getQuestText())));
-                    } else {
-                        generalToPlace.add(SkullItems.getRedMinusSkull("§cAllgemeinaufgabe " + i, Lists.newArrayList("", "§9» Aufgabe:", q.getQuestText())));
-                    }
+                        if(user.checkFinishedQuest(q)) {
+                            generalToPlace.add(SkullItems.getGreenCheckMark("§aAllgemeinaufgabe " + i, q.getQuestLore(user, true)));
+                        } else {
+                            generalToPlace.add(new ClickableItem(SkullItems.getRedMinusSkull("§cAllgemeinaufgabe " + i, q.getQuestLore(user, false)), "quest-"+q.getKey(), null, p.getUniqueId()).getItemStack());
+                        }
                     i++;
                 }
                 if(user.hasIndividualJob()) {
@@ -54,9 +57,9 @@ public class QuestCommand implements CommandExecutor, TabCompleter {
                     int x = 1;
                     for(Quest q : individualQuests) {
                         if(user.checkFinishedQuest(q)) {
-                            individualToPlace.add(SkullItems.getGreenCheckMark("§aJobaufgabe " + x, Lists.newArrayList("", "§9» Aufgabe:", q.getQuestText())));
+                            individualToPlace.add(SkullItems.getGreenCheckMark("§aJobaufgabe " + x, q.getQuestLore(user, true)));
                         } else {
-                            individualToPlace.add(SkullItems.getRedMinusSkull("§cJobaufgabe " + x, Lists.newArrayList("", "§9» Aufgabe:", q.getQuestText())));
+                            individualToPlace.add(new ClickableItem(SkullItems.getRedMinusSkull("§cJobaufgabe " + x, q.getQuestLore(user, false)), "quest-"+q.getKey(), null, p.getUniqueId()).getItemStack());
                         }
                         x++;
                     }
@@ -65,9 +68,9 @@ public class QuestCommand implements CommandExecutor, TabCompleter {
                         int y = 1;
                         for(Quest q : extraQuests) {
                             if(user.checkFinishedQuest(q)) {
-                                extraToPlace.add(SkullItems.getGreenCheckMark("§aExtraaufgabe " + y, Lists.newArrayList("", "§9» Aufgabe:", q.getQuestText())));
+                                extraToPlace.add(SkullItems.getGreenCheckMark("§aExtraaufgabe " + y, q.getQuestLore(user, true)));
                             } else {
-                                extraToPlace.add(SkullItems.getRedMinusSkull("§cExtraaufgabe " + y, Lists.newArrayList("", "§9» Aufgabe:", q.getQuestText())));
+                                extraToPlace.add(new ClickableItem(SkullItems.getRedMinusSkull("§cExtraaufgabe " + y, q.getQuestLore(user, false)), "quest-"+q.getKey(), null, p.getUniqueId()).getItemStack());
                             }
                             y++;
                         }

@@ -60,3 +60,7 @@ job-cancel-error: "Du hast keinen Job der gekündigt werden kann."
 job-new: "Du hast den Job §9{0} §7angenommen."
 job-changed: "Du hast deinen alten Job §9{1} §7gekündigt und den neuen Job §9{0} §7angenommen."
 job-new-quest: "Dir wurden §92 neue Aufgaben §7zugeteilt.\n§9» §71.{0}\n§9» §72. {1}"
+
+quest-not-in-inventory: "Du musst die gesammelten Items in deinem Inventar haben um die Aufgabe abzuschließen."
+quest-not-completed: "Du hast die Aufgabe noch nicht abgeschlossen."
+quest-completed: "Die Aufgabe wurde als §aabgeschlossen §7makiert."
