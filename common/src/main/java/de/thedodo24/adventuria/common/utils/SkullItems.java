@@ -1,9 +1,7 @@
 package de.thedodo24.adventuria.common.utils;
 
-import com.google.common.collect.Lists;
 import de.thedodo24.adventuria.common.job.JobType;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -13,7 +11,6 @@ import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class SkullItems {
 

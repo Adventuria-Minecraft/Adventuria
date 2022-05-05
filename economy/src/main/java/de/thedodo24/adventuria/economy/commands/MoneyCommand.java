@@ -38,12 +38,12 @@ public class MoneyCommand implements CommandExecutor, TabCompleter {
         return v + " Coins";
     }
 
-    private String prefix = Language.get("money-prefix");
+    private String prefix = Language.getLanguage().get("money-prefix");
 
     private void sendHelpMessage(CommandSender p) {
         TextComponent payHelp = new TextComponent(prefix);
-        TextComponent payHelpCommand = new TextComponent(Language.get("money-help-pay"));
-        TextComponent payHelpInfo = new TextComponent(Language.get("money-help-pay-desc"));
+        TextComponent payHelpCommand = new TextComponent(Language.getLanguage().get("money-help-pay"));
+        TextComponent payHelpInfo = new TextComponent(Language.getLanguage().get("money-help-pay-desc"));
         payHelpCommand.setColor(ChatColor.GREEN);
         payHelpCommand.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/money pay "));
         payHelpCommand.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("/money pay ").create()));
@@ -51,8 +51,8 @@ public class MoneyCommand implements CommandExecutor, TabCompleter {
         payHelp.addExtra(payHelpCommand);
         payHelp.addExtra(payHelpInfo);
         TextComponent balanceHelp = new TextComponent(prefix);
-        TextComponent balanceHelpCommand = new TextComponent(Language.get("money-help-balance"));
-        TextComponent balanceHelpInfo = new TextComponent(Language.get("money-help-balance-desc"));
+        TextComponent balanceHelpCommand = new TextComponent(Language.getLanguage().get("money-help-balance"));
+        TextComponent balanceHelpInfo = new TextComponent(Language.getLanguage().get("money-help-balance-desc"));
         balanceHelpCommand.setColor(ChatColor.GREEN);
         balanceHelpCommand.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/money balance "));
         balanceHelpCommand.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("/money balance ").create()));
@@ -60,8 +60,8 @@ public class MoneyCommand implements CommandExecutor, TabCompleter {
         balanceHelp.addExtra(balanceHelpCommand);
         balanceHelp.addExtra(balanceHelpInfo);
         TextComponent topHelp = new TextComponent(prefix);
-        TextComponent topHelpCommand = new TextComponent(Language.get("money-help-top"));
-        TextComponent topHelpInfo = new TextComponent(Language.get("money-help-top-desc"));
+        TextComponent topHelpCommand = new TextComponent(Language.getLanguage().get("money-help-top"));
+        TextComponent topHelpInfo = new TextComponent(Language.getLanguage().get("money-help-top-desc"));
         topHelpCommand.setColor(ChatColor.GREEN);
         topHelpCommand.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/money top"));
         topHelpCommand.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("/money top").create()));
@@ -71,8 +71,8 @@ public class MoneyCommand implements CommandExecutor, TabCompleter {
 
 
         TextComponent takeHelp = new TextComponent(prefix);
-        TextComponent takeHelpCommmand = new TextComponent(Language.get("money-help-take"));
-        TextComponent takeHelpInfo = new TextComponent(Language.get("money-help-take-desc"));
+        TextComponent takeHelpCommmand = new TextComponent(Language.getLanguage().get("money-help-take"));
+        TextComponent takeHelpInfo = new TextComponent(Language.getLanguage().get("money-help-take-desc"));
         takeHelpCommmand.setColor(ChatColor.GREEN);
         takeHelpCommmand.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/money take "));
         takeHelpCommmand.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("/money take ").create()));
@@ -81,8 +81,8 @@ public class MoneyCommand implements CommandExecutor, TabCompleter {
         takeHelp.addExtra(takeHelpInfo);
 
         TextComponent giveHelp = new TextComponent(prefix);
-        TextComponent giveHelpCommand = new TextComponent(Language.get("money-help-give"));
-        TextComponent giveHelpInfo = new TextComponent(Language.get("money-help-give-desc"));
+        TextComponent giveHelpCommand = new TextComponent(Language.getLanguage().get("money-help-give"));
+        TextComponent giveHelpInfo = new TextComponent(Language.getLanguage().get("money-help-give-desc"));
         giveHelpCommand.setColor(ChatColor.GREEN);
         giveHelpCommand.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/money give "));
         giveHelpCommand.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("/money give ").create()));
@@ -91,8 +91,8 @@ public class MoneyCommand implements CommandExecutor, TabCompleter {
         giveHelp.addExtra(giveHelpInfo);
 
         TextComponent setHelp = new TextComponent(prefix);
-        TextComponent setHelpCommand = new TextComponent(Language.get("money-help-set"));
-        TextComponent setHelpInfo = new TextComponent(Language.get("money-help-set-desc"));
+        TextComponent setHelpCommand = new TextComponent(Language.getLanguage().get("money-help-set"));
+        TextComponent setHelpInfo = new TextComponent(Language.getLanguage().get("money-help-set-desc"));
         setHelpCommand.setColor(ChatColor.GREEN);
         setHelpCommand.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/money set "));
         setHelpCommand.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("/money set ").create()));
@@ -111,7 +111,7 @@ public class MoneyCommand implements CommandExecutor, TabCompleter {
                 a.spigot().sendMessage(setHelp);
             }
         } else {
-            p.sendMessage(Language.get("money-help-console"));
+            p.sendMessage(Language.getLanguage().get("money-help-console"));
         }
     }
 
@@ -122,7 +122,7 @@ public class MoneyCommand implements CommandExecutor, TabCompleter {
                 Player p = (Player) s;
                 if(args[0].equalsIgnoreCase("balance") || args[0].equalsIgnoreCase("bal")) {
                     String money = formatValue(EconomyModule.getInstance().getManager().getUserManager().get(p.getUniqueId()).getBalance());
-                    p.sendMessage(prefix + Language.get("money-balance", money));
+                    p.sendMessage(prefix + Language.getLanguage().get("money-balance", money));
                 } else if(args[0].equalsIgnoreCase("top")) {
                     HashMap<User, Long> top = EconomyModule.getInstance().getManager().getUserManager().getHighestMoney();
                     p.sendMessage("§7|------| §aReichste Spieler §7|------|");
@@ -132,15 +132,15 @@ public class MoneyCommand implements CommandExecutor, TabCompleter {
                     sendHelpMessage(p);
                 }
             } else {
-                s.sendMessage(Language.get("haveto-player"));
+                s.sendMessage(Language.getLanguage().get("haveto-player"));
             }
         } else if(args.length == 2) {
             if(args[0].equalsIgnoreCase("balance") || args[0].equalsIgnoreCase("bal")) {
                 User m = EconomyModule.getInstance().getManager().getUserManager().getByName(args[1]);
                 if(m != null) {
-                    s.sendMessage(prefix + Language.get("money-balance-player", m.getName(), formatValue(m.getBalance())));
+                    s.sendMessage(prefix + Language.getLanguage().get("money-balance-player", m.getName(), formatValue(m.getBalance())));
                 } else {
-                    s.sendMessage(prefix + Language.get("player-not-exists", args[1]));
+                    s.sendMessage(prefix + Language.getLanguage().get("player-not-exists", args[1]));
                 }
             } else {
                 sendHelpMessage(s);
@@ -157,7 +157,7 @@ public class MoneyCommand implements CommandExecutor, TabCompleter {
                     try {
                         value = Long.parseLong(arg);
                     } catch(NumberFormatException e) {
-                        s.sendMessage(prefix + Language.get("argument-has-to-be", "2", "eine positive Zahl", args[2]));
+                        s.sendMessage(prefix + Language.getLanguage().get("argument-has-to-be", "2", "eine positive Zahl", args[2]));
                         return false;
                     }
                     if(value > 0) {
@@ -170,26 +170,26 @@ public class MoneyCommand implements CommandExecutor, TabCompleter {
                                     name = oMoney.getName();
                                     Player other;
                                     if((other = Bukkit.getPlayer(oMoney.getKey())) != null) {
-                                        other.sendMessage(prefix + Language.get("money-pay-other", p.getName(), formatValue(value)));
+                                        other.sendMessage(prefix + Language.getLanguage().get("money-pay-other", p.getName(), formatValue(value)));
                                     }
                                 } else {
-                                    p.sendMessage(prefix + Language.get("money-pay-yourself"));
+                                    p.sendMessage(prefix + Language.getLanguage().get("money-pay-yourself"));
                                     return false;
                                 }
                             } else {
-                                p.sendMessage(prefix + Language.get("player-not-exists", args[1]));
+                                p.sendMessage(prefix + Language.getLanguage().get("player-not-exists", args[1]));
                                 return false;
                             }
                             pMoney.withdrawMoney(value);
-                            p.sendMessage(prefix + Language.get("money-pay"), name, formatValue(value));
+                            p.sendMessage(prefix + Language.getLanguage().get("money-pay"), name, formatValue(value));
                         } else {
-                            p.sendMessage(prefix + Language.get("money-not-enough"));
+                            p.sendMessage(prefix + Language.getLanguage().get("money-not-enough"));
                         }
                     } else {
-                        p.sendMessage(prefix + Language.get("argument-has-to-be", "2", "eine positive Zahl", args[2]));
+                        p.sendMessage(prefix + Language.getLanguage().get("argument-has-to-be", "2", "eine positive Zahl", args[2]));
                     }
                 } else {
-                    s.sendMessage(Language.get("haveto-player"));
+                    s.sendMessage(Language.getLanguage().get("haveto-player"));
                 }
             } else if(args[0].equalsIgnoreCase("give")) {
                 if(s.hasPermission("money.give")) {
@@ -200,7 +200,7 @@ public class MoneyCommand implements CommandExecutor, TabCompleter {
                     try {
                         value = Long.parseLong(arg);
                     } catch(NumberFormatException e) {
-                        s.sendMessage(prefix + Language.get("argument-has-to-be", "2", "eine positive Zahl", args[2]));
+                        s.sendMessage(prefix + Language.getLanguage().get("argument-has-to-be", "2", "eine positive Zahl", args[2]));
                         return false;
                     }
                     if(value > 0) {
@@ -211,23 +211,23 @@ public class MoneyCommand implements CommandExecutor, TabCompleter {
                                 name = oMoney.getName();
                                 Player other;
                                 if((other = Bukkit.getPlayer(oMoney.getKey())) != null) {
-                                    other.sendMessage(prefix + Language.get("money-give-other", s.getName(), formatValue(value)));
+                                    other.sendMessage(prefix + Language.getLanguage().get("money-give-other", s.getName(), formatValue(value)));
                                 }
                             } else {
-                                s.sendMessage(prefix + Language.get("player-not-exists"), args[1]);
+                                s.sendMessage(prefix + Language.getLanguage().get("player-not-exists"), args[1]);
                                 return false;
                             }
-                        s.sendMessage(prefix + Language.get("money-give", name, formatValue(value)));
+                        s.sendMessage(prefix + Language.getLanguage().get("money-give", name, formatValue(value)));
                         String finalName = name;
                         Bukkit.getOnlinePlayers().forEach(all -> {
                             if(all.hasPermission("money.notify"))
-                                all.sendMessage(prefix + Language.get("money-give-notify", s.getName(), finalName, formatValue(value)));
+                                all.sendMessage(prefix + Language.getLanguage().get("money-give-notify", s.getName(), finalName, formatValue(value)));
                         });
                     } else {
-                        s.sendMessage(prefix + Language.get("argument-has-to-be", "2", "eine positive Zahl", args[2]));
+                        s.sendMessage(prefix + Language.getLanguage().get("argument-has-to-be", "2", "eine positive Zahl", args[2]));
                     }
                 } else {
-                    s.sendMessage(Language.get("no-permissions", "money.give"));
+                    s.sendMessage(Language.getLanguage().get("no-permissions", "money.give"));
                 }
             } else if(args[0].equalsIgnoreCase("set")) {
                 if(s.hasPermission("money.set")) {
@@ -238,7 +238,7 @@ public class MoneyCommand implements CommandExecutor, TabCompleter {
                     try {
                         value = Long.parseLong(arg);
                     } catch(NumberFormatException e) {
-                        s.sendMessage(prefix + Language.get("argument-has-to-be", "2", "eine positive Zahl", args[2]));
+                        s.sendMessage(prefix + Language.getLanguage().get("argument-has-to-be", "2", "eine positive Zahl", args[2]));
                         return false;
                     }
                     if(value >= 0) {
@@ -249,22 +249,22 @@ public class MoneyCommand implements CommandExecutor, TabCompleter {
                                 name = oMoney.getName();
                                 Player other;
                                 if((other = Bukkit.getPlayer(oMoney.getKey())) != null) {
-                                    other.sendMessage(prefix + Language.get("money-set-other", s.getName(), formatValue(value)));
+                                    other.sendMessage(prefix + Language.getLanguage().get("money-set-other", s.getName(), formatValue(value)));
                                 }
                             } else {
-                                s.sendMessage(prefix + Language.get("player-not-exists"), args[1]);
+                                s.sendMessage(prefix + Language.getLanguage().get("player-not-exists"), args[1]);
                             }
-                        s.sendMessage(prefix + Language.get("money-set", name, formatValue(value)));
+                        s.sendMessage(prefix + Language.getLanguage().get("money-set", name, formatValue(value)));
                         String finalName = name;
                         Bukkit.getOnlinePlayers().forEach(all -> {
                             if(all.hasPermission("money.notify"))
-                                all.sendMessage(prefix + Language.get("money-set-notify", s.getName(), finalName, formatValue(value)));
+                                all.sendMessage(prefix + Language.getLanguage().get("money-set-notify", s.getName(), finalName, formatValue(value)));
                         });
                     } else {
-                        s.sendMessage(prefix + Language.get("argument-has-to-be", "2", "eine positive Zahl", args[2]));
+                        s.sendMessage(prefix + Language.getLanguage().get("argument-has-to-be", "2", "eine positive Zahl", args[2]));
                     }
                 } else {
-                    s.sendMessage(Language.get("no-permissions", "money.set"));
+                    s.sendMessage(Language.getLanguage().get("no-permissions", "money.set"));
                 }
             } else if(args[0].equalsIgnoreCase("take")) {
                 if(s.hasPermission("money.take")) {
@@ -275,7 +275,7 @@ public class MoneyCommand implements CommandExecutor, TabCompleter {
                     try {
                         value = Long.parseLong(arg);
                     } catch(NumberFormatException e) {
-                        s.sendMessage(prefix + Language.get("argument-has-to-be", "2", "eine positive Zahl", args[2]));
+                        s.sendMessage(prefix + Language.getLanguage().get("argument-has-to-be", "2", "eine positive Zahl", args[2]));
                         return false;
                     }
                     if(value >= 0) {
@@ -286,22 +286,22 @@ public class MoneyCommand implements CommandExecutor, TabCompleter {
                                 oMoney.withdrawMoney(value);
                                 Player other;
                                 if((other = Bukkit.getPlayer(oMoney.getKey())) != null) {
-                                    other.sendMessage(prefix + Language.get("money-take-other", s.getName(), formatValue(value)));
+                                    other.sendMessage(prefix + Language.getLanguage().get("money-take-other", s.getName(), formatValue(value)));
                                 }
                             } else {
-                                s.sendMessage(prefix + Language.get("player-not-exists"), args[1]);
+                                s.sendMessage(prefix + Language.getLanguage().get("player-not-exists"), args[1]);
                             }
-                        s.sendMessage(prefix + Language.get("money-take", name, formatValue(value)));
+                        s.sendMessage(prefix + Language.getLanguage().get("money-take", name, formatValue(value)));
                         String finalName = name;
                         Bukkit.getOnlinePlayers().forEach(all -> {
                             if(all.hasPermission("money.notify"))
-                                all.sendMessage(prefix + Language.get("money-take-notify", s.getName(), finalName, formatValue(value)));
+                                all.sendMessage(prefix + Language.getLanguage().get("money-take-notify", s.getName(), finalName, formatValue(value)));
                         });
                     } else {
-                        s.sendMessage(prefix + Language.get("argument-has-to-be", "2", "eine positive Zahl", args[2]));
+                        s.sendMessage(prefix + Language.getLanguage().get("argument-has-to-be", "2", "eine positive Zahl", args[2]));
                     }
                 } else {
-                    s.sendMessage(Language.get("no-permissions", "money.take"));
+                    s.sendMessage(Language.getLanguage().get("no-permissions", "money.take"));
                 }
             } else {
                 sendHelpMessage(s);

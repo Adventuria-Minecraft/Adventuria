@@ -1,5 +1,6 @@
 package de.thedodo24.adventuria.common.utils;
 
+import de.thedodo24.adventuria.common.CommonModule;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.yaml.snakeyaml.Yaml;
@@ -14,26 +15,38 @@ import java.util.NoSuchElementException;
 public class Language {
 
 
-    private static Map<String, String> languageMap = new HashMap<>();
+    private Map<String, String> languageMap = new HashMap<>();
 
-    public static void init() throws NoSuchElementException {
+    public Language(String resource) {
+        init(resource);
+    }
+
+    private void init(String resource) throws NoSuchElementException {
         Yaml yaml = new Yaml();
         InputStream inputStream;
-        inputStream = Language.class.getClassLoader().getResourceAsStream("language.yml");
+        inputStream = Language.class.getClassLoader().getResourceAsStream(resource);
         Map<String, String> values = yaml.load(inputStream);
         if(values != null)
             languageMap = values;
         else
-            throw new NoSuchElementException("No file named language.yml found in resources");
+            throw new NoSuchElementException("No file named "+resource+" found in resources");
     }
 
-    public static String get(String key) {
+    public static Language getLanguage() {
+        return CommonModule.getInstance().getLanguage();
+    }
+
+    public static Language getMaterials() {
+        return CommonModule.getInstance().getMaterials();
+    }
+
+    public String get(String key) {
         if(languageMap.containsKey(key))
             return languageMap.get(key);
         return "§cError: phrase-not-found §e("+key+")";
     }
 
-    public static String get(String key, Object... args) {
+    public String get(String key, Object... args) {
         if(languageMap.containsKey(key))
             return MessageFormat.format(languageMap.get(key), args);
         return "§cError: phrase-not-found §e("+key+")";

@@ -35,6 +35,9 @@ public class CommonModule extends Module {
     private final NamespacedKey inventoryKey = new NamespacedKey(getPlugin(), "inventory-key");
     private final NamespacedKey clickableItemKey = new NamespacedKey(getPlugin(), "clickable-key");
 
+    public Language language;
+    public Language materials;
+
 
     public CommonModule(ModuleSettings settings, ModuleManager manager, JavaPlugin plugin) {
         super(settings, manager, plugin);
@@ -43,7 +46,8 @@ public class CommonModule extends Module {
 
     @Override
     public void onEnable() {
-        Language.init();
+        language = new Language("language.yml");
+        materials = new Language("materials.yml");
         dateFormat = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SS");
         setTimes();
         getManager().getJobManager().createJobs();

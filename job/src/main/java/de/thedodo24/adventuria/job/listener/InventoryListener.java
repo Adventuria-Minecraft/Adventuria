@@ -7,9 +7,13 @@ import de.thedodo24.adventuria.common.inventory.InventoryManager;
 import de.thedodo24.adventuria.common.inventory.SimpleInventory;
 import de.thedodo24.adventuria.common.job.JobType;
 import de.thedodo24.adventuria.common.player.User;
+import de.thedodo24.adventuria.common.quests.CollectQuest;
 import de.thedodo24.adventuria.common.quests.Quest;
+import de.thedodo24.adventuria.common.quests.QuestType;
 import de.thedodo24.adventuria.common.utils.Language;
 import de.thedodo24.adventuria.common.utils.SkullItems;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -18,15 +22,18 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
+import org.checkerframework.checker.units.qual.A;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class InventoryListener implements Listener {
 
-    private final String prefix = Language.get("job-prefix");
+    private final String prefix = Language.getLanguage().get("job-prefix");
 
 
     @EventHandler
@@ -38,6 +45,7 @@ public class InventoryListener implements Listener {
             if(InventoryManager.checkInventory(inventory)) {
                 SimpleInventory simpleInventory = InventoryManager.getSimpleInventory(inventory);
                 if(simpleInventory != null) {
+                    e.setCancelled(true);
                     ItemStack itemStack = e.getCurrentItem();
                     if(itemStack != null && itemStack.hasItemMeta()) {
                         ItemMeta meta = itemStack.getItemMeta();
@@ -71,9 +79,9 @@ public class InventoryListener implements Listener {
                                             if(user.hasIndividualJob()) {
                                                 JobType individualJob = user.getIndividualJob();
                                                 user.removeJob(individualJob);
-                                                p.sendMessage(prefix + Language.get("job-cancel", individualJob.getName()));
+                                                p.sendMessage(prefix + Language.getLanguage().get("job-cancel", individualJob.getName()));
                                             } else {
-                                                p.sendMessage(prefix + Language.get("job-cancel-error"));
+                                                p.sendMessage(prefix + Language.getLanguage().get("job-cancel-error"));
                                             }
                                             p.closeInventory();
                                             p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
@@ -97,11 +105,85 @@ public class InventoryListener implements Listener {
                                             p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1,1);
                                             InventoryManager.getSimpleInventories().remove(simpleInventory.getInventoryKey());
                                             if(individualJob == null)
-                                                p.sendMessage(prefix + Language.get("job-new", jobType.getName()));
+                                                p.sendMessage(prefix + Language.getLanguage().get("job-new", jobType.getName()));
                                             else
-                                                p.sendMessage(prefix + Language.get("job-changed", jobType.getName(), individualJob.getName()));
+                                                p.sendMessage(prefix + Language.getLanguage().get("job-changed", jobType.getName(), individualJob.getName()));
                                             List<Quest> newQuests = user.getJobQuests(user.getIndividualJob());
-                                            p.sendMessage(prefix + Language.get("job-new-quest", newQuests.get(0).getQuestText(), newQuests.get(1).getQuestText()));
+                                            p.sendMessage(prefix + Language.getLanguage().get("job-new-quest", newQuests.get(0).getQuestText(), newQuests.get(1).getQuestText()));
+                                        }
+                                    }
+                                }
+                                case QUEST_MENU -> {
+                                    if(key.startsWith("quest-")) {
+                                        String[] splittedKey = key.split("-");
+                                        long questId = Long.parseLong(splittedKey[1]);
+                                        Quest quest = CommonModule.getInstance().getManager().getQuestManager().get(questId);
+                                        if(quest.getQuestType().equals(QuestType.COLLECT)) {
+                                            CollectQuest collectQuest = quest.toCollectQuest();
+                                            if(collectQuest.isCountedAsAll()) {
+                                                if(user.getQuestProgress(collectQuest) < collectQuest.getCollectMap().get(collectQuest.getCollectMap().keySet().stream().findFirst().get())) {
+                                                    p.closeInventory();
+                                                    p.sendMessage(prefix + Language.getLanguage().get("quest-not-completed"));
+                                                    p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1, 1);
+                                                    return;
+                                                }
+                                            } else {
+                                                if(collectQuest.getCollectMap().keySet().stream()
+                                                        .anyMatch(k -> user.getQuestProgress(collectQuest, k) < collectQuest.getCollectMap().get(k))) {
+                                                    p.closeInventory();
+                                                    p.sendMessage(prefix + Language.getLanguage().get("quest-not-completed"));
+                                                    p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1, 1);
+                                                    return;
+                                                }
+                                            }
+                                                PlayerInventory playerInventory = p.getInventory();
+                                                List<Boolean> boolList = Lists.newArrayList();
+                                                collectQuest.getCollectMap().forEach((material, i) -> {
+                                                    AtomicInteger sum = new AtomicInteger();
+                                                    HashMap<Integer, ? extends ItemStack> allItems = playerInventory.all(material);
+                                                    allItems.values().forEach(is -> {
+                                                        sum.getAndAdd(is.getAmount());
+                                                        Bukkit.broadcast(Component.text("added " + is.getAmount() + " / " + sum.get()));
+                                                    });
+                                                    Bukkit.broadcast(Component.text("finished: " + sum.get() + " / " + i));
+                                                    Bukkit.broadcast(Component.text("added to boollist: " + (sum.get() >= i)));
+                                                    boolList.add(sum.get() >= i);
+                                                });
+                                                if(collectQuest.isCountedAsAll()) {
+                                                    if(boolList.stream().noneMatch(b -> b)) {
+                                                        p.sendMessage(prefix + Language.getLanguage().get("quest-not-in-inventory"));
+                                                        p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1, 1);
+                                                        p.closeInventory();
+                                                        return;
+                                                    }
+                                                } else {
+                                                    if(boolList.stream().anyMatch(b -> !b)) {
+                                                        p.sendMessage(prefix + Language.getLanguage().get("quest-not-in-inventory"));
+                                                        p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1, 1);
+                                                        p.closeInventory();
+                                                        return;
+                                                    }
+                                                }
+                                                    collectQuest.getCollectMap().forEach((material, i) -> {
+                                                        AtomicInteger a = new AtomicInteger(i);
+                                                        playerInventory.all(material).forEach((place, is) -> {
+                                                            if(a.get() > 0) {
+                                                                if((a.get() - is.getAmount()) >= 0) {
+                                                                    a.addAndGet(-is.getAmount());
+                                                                    playerInventory.setItem(place, null);
+                                                                } else {
+                                                                    is.setAmount(is.getAmount() - a.get());
+                                                                    playerInventory.setItem(place, is);
+                                                                    a.set(0);
+                                                                }
+                                                            }
+                                                        });
+                                                    });
+                                                    p.sendMessage(prefix + Language.getLanguage().get("quest-completed"));
+                                                    p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
+                                                    user.setQuestProgress(collectQuest, -1L);
+                                                    user.addXP(collectQuest.getJobType(), 20);
+                                            p.closeInventory();
                                         }
                                     }
                                 }
@@ -109,7 +191,6 @@ public class InventoryListener implements Listener {
                         }
                     }
                 }
-                e.setCancelled(true);
             }
         }
     }

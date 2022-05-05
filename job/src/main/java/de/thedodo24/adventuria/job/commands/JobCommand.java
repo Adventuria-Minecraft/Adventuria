@@ -26,7 +26,7 @@ public class JobCommand implements CommandExecutor, TabCompleter {
         cmd.setTabCompleter(this);
     }
 
-    private String prefix = Language.get("job-prefix");
+    private String prefix = Language.getLanguage().get("job-prefix");
 
     /*
         /job
@@ -71,10 +71,10 @@ public class JobCommand implements CommandExecutor, TabCompleter {
                 p.openInventory(simpleInventory.getInventory());
                 p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1);
             } else {
-                p.sendMessage(prefix + Language.get("job-help"));
+                p.sendMessage(prefix + Language.getLanguage().get("job-help"));
             }
         } else {
-            sender.sendMessage(prefix + Language.get("haveto-player"));
+            sender.sendMessage(prefix + Language.getLanguage().get("haveto-player"));
         }
         return false;
     }

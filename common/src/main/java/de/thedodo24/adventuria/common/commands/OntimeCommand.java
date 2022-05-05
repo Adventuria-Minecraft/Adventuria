@@ -32,7 +32,7 @@ public class OntimeCommand implements CommandExecutor, TabCompleter {
         cmd.setTabCompleter(this);
     }
 
-    private String prefix = Language.get("ontime-prefix");
+    private String prefix = Language.getLanguage().get("ontime-prefix");
 
     @Override
     public boolean onCommand(@NotNull CommandSender s, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
@@ -50,7 +50,7 @@ public class OntimeCommand implements CommandExecutor, TabCompleter {
                 long week = u.getWeekOntime() + currentOntime;
                 long day = u.getDayOntime() + currentOntime;
                 long totalAfk = u.getAfkTime() + afkTime;
-                p.sendMessage(prefix + Language.get("ontime-self", TimeFormat.getString(total), TimeFormat.getString(week), TimeFormat.getString(day), TimeFormat.getString(totalAfk)));
+                p.sendMessage(prefix + Language.getLanguage().get("ontime-self", TimeFormat.getString(total), TimeFormat.getString(week), TimeFormat.getString(day), TimeFormat.getString(totalAfk)));
             } else {
                 s.sendMessage("Du musst ein Spieler sein.");
             }
@@ -92,9 +92,9 @@ public class OntimeCommand implements CommandExecutor, TabCompleter {
                             totalAfk += afkTime;
                         }
                     }
-                    s.sendMessage(prefix + Language.get("ontime-others", u.getName(), TimeFormat.getString(total), TimeFormat.getString(week), TimeFormat.getString(day), TimeFormat.getString(totalAfk)));
+                    s.sendMessage(prefix + Language.getLanguage().get("ontime-others", u.getName(), TimeFormat.getString(total), TimeFormat.getString(week), TimeFormat.getString(day), TimeFormat.getString(totalAfk)));
                 } else {
-                    s.sendMessage(prefix + Language.get("player-not-exists", args[0]));
+                    s.sendMessage(prefix + Language.getLanguage().get("player-not-exists", args[0]));
                 }
             }
         } else if(args.length == 2) {
@@ -126,16 +126,16 @@ public class OntimeCommand implements CommandExecutor, TabCompleter {
                         p.openInventory(inventory);
                         p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
                     } else {
-                        p.sendMessage(prefix + Language.get("player-not-exists", args[1]));
+                        p.sendMessage(prefix + Language.getLanguage().get("player-not-exists", args[1]));
                     }
                 } else {
-                    s.sendMessage(prefix + Language.get("haveto-player"));
+                    s.sendMessage(prefix + Language.getLanguage().get("haveto-player"));
                 }
             } else {
-                s.sendMessage(prefix + Language.get("ontime-help"));
+                s.sendMessage(prefix + Language.getLanguage().get("ontime-help"));
             }
         } else {
-            s.sendMessage(prefix + Language.get("ontime-help"));
+            s.sendMessage(prefix + Language.getLanguage().get("ontime-help"));
         }
         return false;
     }
