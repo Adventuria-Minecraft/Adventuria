@@ -31,12 +31,12 @@ public class QuestManager extends CollectionManager<Quest, Long> {
             getOrGenerate(getHighestID(), key -> new CollectQuest(key,
                     JobType.WOOD,
                     new HashMap<>(){{
-                        put(Material.ACACIA_WOOD, 9*64);
-                        put(Material.BIRCH_WOOD, 9*64);
-                        put(Material.DARK_OAK_WOOD, 9*64);
-                        put(Material.JUNGLE_WOOD, 9*64);
-                        put(Material.OAK_WOOD, 9*64);
-                        put(Material.SPRUCE_WOOD, 9*64);
+                        put(Material.ACACIA_WOOD, 9*64L);
+                        put(Material.BIRCH_WOOD, 9*64L);
+                        put(Material.DARK_OAK_WOOD, 9*64L);
+                        put(Material.JUNGLE_WOOD, 9*64L);
+                        put(Material.OAK_WOOD, 9*64L);
+                        put(Material.SPRUCE_WOOD, 9*64L);
                     }},
                     true,
                     CollectQuests.GET,
@@ -44,12 +44,12 @@ public class QuestManager extends CollectionManager<Quest, Long> {
             getOrGenerate(getHighestID() + 1, key -> new CollectQuest(key,
                     JobType.WOOD,
                     new HashMap<>(){{
-                        put(Material.ACACIA_SAPLING, 2*64);
-                        put(Material.BIRCH_SAPLING, 2*64);
-                        put(Material.DARK_OAK_SAPLING, 2*64);
-                        put(Material.JUNGLE_SAPLING, 2*64);
-                        put(Material.OAK_SAPLING, 2*64);
-                        put(Material.SPRUCE_SAPLING, 2*64);
+                        put(Material.ACACIA_SAPLING, 2*64L);
+                        put(Material.BIRCH_SAPLING, 2*64L);
+                        put(Material.DARK_OAK_SAPLING, 2*64L);
+                        put(Material.JUNGLE_SAPLING, 2*64L);
+                        put(Material.OAK_SAPLING, 2*64L);
+                        put(Material.SPRUCE_SAPLING, 2*64L);
                     }},
                     true,
                     CollectQuests.GET,
@@ -57,8 +57,8 @@ public class QuestManager extends CollectionManager<Quest, Long> {
             getOrGenerate(getHighestID() + 1, key -> new CollectQuest(key,
                     JobType.FISH,
                     new HashMap<>(){{
-                        put(Material.COD, 2*64);
-                        put(Material.SALMON, 2*64);
+                        put(Material.COD, 2*64L);
+                        put(Material.SALMON, 2*64L);
                     }},
                     true,
                     CollectQuests.FISH,
@@ -66,8 +66,8 @@ public class QuestManager extends CollectionManager<Quest, Long> {
             getOrGenerate(getHighestID() + 1, key -> new CollectQuest(key,
                     JobType.FISH,
                     new HashMap<>(){{
-                        put(Material.COD, 2*64);
-                        put(Material.SALMON, 2*64);
+                        put(Material.COD, 2*64L);
+                        put(Material.SALMON, 2*64L);
                     }},
                     true,
                     CollectQuests.FISH,
@@ -80,10 +80,10 @@ public class QuestManager extends CollectionManager<Quest, Long> {
             getOrGenerate(getHighestID() + 1, key -> new CollectQuest(key,
                     JobType.HUNT,
                     new HashMap<>(){{
-                        put(Material.GUNPOWDER, 64);
-                        put(Material.BONE, 64);
-                        put(Material.ROTTEN_FLESH, 64);
-                        put(Material.STRING, 64);
+                        put(Material.GUNPOWDER, 64L);
+                        put(Material.BONE, 64L);
+                        put(Material.ROTTEN_FLESH, 64L);
+                        put(Material.STRING, 64L);
                     }},
                     true,
                     CollectQuests.GET,
@@ -91,8 +91,8 @@ public class QuestManager extends CollectionManager<Quest, Long> {
             getOrGenerate(getHighestID() + 1, key -> new CollectQuest(key,
                     JobType.HUNT,
                     new HashMap<>(){{
-                        put(Material.GUNPOWDER, 64);
-                        put(Material.BONE, 64);
+                        put(Material.GUNPOWDER, 64L);
+                        put(Material.BONE, 64L);
                     }},
                     true,
                     CollectQuests.GET,
@@ -100,10 +100,10 @@ public class QuestManager extends CollectionManager<Quest, Long> {
             getOrGenerate(getHighestID() + 1, key -> new CollectQuest(key,
                     JobType.BUTCHER,
                     new HashMap<>(){{
-                        put(Material.BEEF, 64);
-                        put(Material.PORKCHOP, 64);
-                        put(Material.MUTTON, 64);
-                        put(Material.CHICKEN, 64);
+                        put(Material.BEEF, 64L);
+                        put(Material.PORKCHOP, 64L);
+                        put(Material.MUTTON, 64L);
+                        put(Material.CHICKEN, 64L);
                     }},
                     true,
                     CollectQuests.GET,
@@ -111,8 +111,8 @@ public class QuestManager extends CollectionManager<Quest, Long> {
             getOrGenerate(getHighestID() + 1, key -> new CollectQuest(key,
                     JobType.BUTCHER,
                     new HashMap<>(){{
-                        put(Material.BEEF, 64);
-                        put(Material.PORKCHOP, 64);
+                        put(Material.BEEF, 64L);
+                        put(Material.PORKCHOP, 64L);
                     }},
                     true,
                     CollectQuests.GET,
@@ -120,8 +120,8 @@ public class QuestManager extends CollectionManager<Quest, Long> {
             getOrGenerate(getHighestID() + 1, key -> new CollectQuest(key,
                     JobType.MINER,
                     new HashMap<>(){{
-                        put(Material.COBBLESTONE, 9*64);
-                        put(Material.DEEPSLATE, 9*64);
+                        put(Material.COBBLESTONE, 9*64L);
+                        put(Material.DEEPSLATE, 9*64L);
                     }},
                     true,
                     CollectQuests.GET,
@@ -129,9 +129,9 @@ public class QuestManager extends CollectionManager<Quest, Long> {
             getOrGenerate(getHighestID() + 1, key -> new CollectQuest(key,
                     JobType.MINER,
                     new HashMap<>(){{
-                        put(Material.RAW_IRON, 2*64);
-                        put(Material.RAW_COPPER, 2*64);
-                        put(Material.COAL, 2*64);
+                        put(Material.RAW_IRON, 2*64L);
+                        put(Material.RAW_COPPER, 2*64L);
+                        put(Material.COAL, 2*64L);
                     }},
                     true,
                     CollectQuests.GET,
@@ -139,7 +139,7 @@ public class QuestManager extends CollectionManager<Quest, Long> {
             getOrGenerate(getHighestID() + 1, key -> new CollectQuest(key,
                     JobType.GENERAL,
                     new HashMap<>(){{
-                        put(Material.STICK, 64);
+                        put(Material.STICK, 64L);
                     }},
                     true,
                     CollectQuests.GET,
@@ -147,7 +147,7 @@ public class QuestManager extends CollectionManager<Quest, Long> {
             getOrGenerate(getHighestID() + 1, key -> new CollectQuest(key,
                     JobType.GENERAL,
                     new HashMap<>(){{
-                        put(Material.STONE, 64);
+                        put(Material.STONE, 64L);
                     }},
                     true,
                     CollectQuests.BUILD,
@@ -155,23 +155,25 @@ public class QuestManager extends CollectionManager<Quest, Long> {
             getOrGenerate(getHighestID() + 1, key -> new CollectQuest(key,
                     JobType.GENERAL,
                     new HashMap<>(){{
-                        put(Material.SALMON, 64);
+                        put(Material.GRAVEL, 64L);
+                        put(Material.DIRT, 64L);
                     }},
-                    true,
-                    CollectQuests.FISH,
+                    false,
+                    CollectQuests.GET,
                     "Testaufgabe Allgemein 3"));
             getOrGenerate(getHighestID() + 1, key -> new CollectQuest(key,
                     JobType.GENERAL,
                     new HashMap<>(){{
-                        put(Material.BRICK, 64);
+                        put(Material.BEDROCK, 64L);
+                        put(Material.ACACIA_LOG, 64L);
                     }},
-                    true,
-                    CollectQuests.BUILD,
+                    false,
+                    CollectQuests.GET,
                     "Testaufgabe Allgemein 4"));
             getOrGenerate(getHighestID() + 1, key -> new CollectQuest(key,
                     JobType.GENERAL,
                     new HashMap<>(){{
-                        put(Material.GRANITE, 64);
+                        put(Material.GRANITE, 64L);
                     }},
                     true,
                     CollectQuests.BUILD,
@@ -179,7 +181,7 @@ public class QuestManager extends CollectionManager<Quest, Long> {
             getOrGenerate(getHighestID() + 1, key -> new CollectQuest(key,
                     JobType.GENERAL,
                     new HashMap<>(){{
-                        put(Material.DIRT, 64);
+                        put(Material.DIRT, 64L);
                     }},
                     true,
                     CollectQuests.BUILD,
@@ -187,7 +189,7 @@ public class QuestManager extends CollectionManager<Quest, Long> {
             getOrGenerate(getHighestID() + 1, key -> new CollectQuest(key,
                     JobType.EXTRA,
                     new HashMap<>(){{
-                        put(Material.GRAVEL, 64);
+                        put(Material.GRAVEL, 64L);
                     }},
                     true,
                     CollectQuests.BUILD,
@@ -195,7 +197,7 @@ public class QuestManager extends CollectionManager<Quest, Long> {
             getOrGenerate(getHighestID() + 1, key -> new CollectQuest(key,
                     JobType.EXTRA,
                     new HashMap<>(){{
-                        put(Material.IRON_BLOCK, 64);
+                        put(Material.IRON_BLOCK, 64L);
                     }},
                     true,
                     CollectQuests.BUILD,
@@ -203,7 +205,7 @@ public class QuestManager extends CollectionManager<Quest, Long> {
             getOrGenerate(getHighestID() + 1, key -> new CollectQuest(key,
                     JobType.EXTRA,
                     new HashMap<>(){{
-                        put(Material.WHITE_WOOL, 64);
+                        put(Material.WHITE_WOOL, 64L);
                     }},
                     true,
                     CollectQuests.BUILD,
@@ -257,7 +259,7 @@ public class QuestManager extends CollectionManager<Quest, Long> {
                     List<Quest> individualQuestList = getShuffledQuestList(job);
                     u.setJobQuests(job, getFinishedQuests(2, individualQuestList));
                 }
-                u.clearFinishedQuests();
+                u.clearGeneralQuests();
                 u.setJobQuests(JobType.EXTRA, getFinishedQuests(2, getShuffledQuestList(JobType.GENERAL)));
             });
         }
