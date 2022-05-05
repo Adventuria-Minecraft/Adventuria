@@ -1,6 +1,7 @@
 package de.thedodo24.adventuria.common.listener;
 
 import com.google.common.collect.Lists;
+import com.google.gson.JsonElement;
 import de.thedodo24.adventuria.common.CommonModule;
 import de.thedodo24.adventuria.common.player.User;
 import de.thedodo24.adventuria.common.utils.Ontime;
@@ -48,40 +49,43 @@ public class PlayerListener implements Listener {
                 if(item.hasItemMeta()) {
                     if(e.getSlotType() != InventoryType.SlotType.OUTSIDE) {
                         InventoryView inv = p.getOpenInventory();
-                        String title = GsonComponentSerializer.gson().serializeToTree(inv.title()).getAsJsonObject().get("text").getAsString();
-                        if ("§aWähle einen Spieler aus:".equals(title)) {
-                            e.setCancelled(true);
-                            if (item.getItemMeta().hasDisplayName()) {
-                                String displayName = GsonComponentSerializer.gson().serializeToTree(item.getItemMeta().displayName()).getAsJsonObject().get("text").getAsString();
-                                String playerName = displayName.substring(2);
-                                Inventory inventory = Bukkit.createInventory(null, 9, Component.text("§a» " + playerName));
-                                User u = CommonModule.getInstance().getManager().getUserManager().getByName(playerName);
-                                Map<String, Long> ontimeHistoryMap = u.getOntimeHistoryMap();
-                                Map<String, Long> afkHistoryMap = u.getAfkTimeHistoryMap();
-                                for (int i = 0; i < 10; i++) {
-                                    int week = 9 - i;
-                                    if (ontimeHistoryMap.containsKey(String.valueOf(week)) && afkHistoryMap.containsKey(String.valueOf(week))) {
-                                        String ontime = TimeFormat.getInDays(ontimeHistoryMap.get(String.valueOf(week)));
-                                        String afkTime;
-                                        if (afkHistoryMap.containsKey(String.valueOf(week + 1))) {
-                                            afkTime = TimeFormat.getInDays(afkHistoryMap.get(String.valueOf(week)) - afkHistoryMap.get(String.valueOf(week + 1)));
-                                        } else {
-                                            afkTime = TimeFormat.getInDays(afkHistoryMap.get(String.valueOf(week)));
+                        JsonElement titleElement = GsonComponentSerializer.gson().serializeToTree(inv.title()).getAsJsonObject().get("text");
+                        if(titleElement != null) {
+                            String title = titleElement.getAsString();
+                            if ("§aWähle einen Spieler aus:".equals(title)) {
+                                e.setCancelled(true);
+                                if (item.getItemMeta().hasDisplayName()) {
+                                    String displayName = GsonComponentSerializer.gson().serializeToTree(item.getItemMeta().displayName()).getAsJsonObject().get("text").getAsString();
+                                    String playerName = displayName.substring(2);
+                                    Inventory inventory = Bukkit.createInventory(null, 9, Component.text("§a» " + playerName));
+                                    User u = CommonModule.getInstance().getManager().getUserManager().getByName(playerName);
+                                    Map<String, Long> ontimeHistoryMap = u.getOntimeHistoryMap();
+                                    Map<String, Long> afkHistoryMap = u.getAfkTimeHistoryMap();
+                                    for (int i = 0; i < 10; i++) {
+                                        int week = 9 - i;
+                                        if (ontimeHistoryMap.containsKey(String.valueOf(week)) && afkHistoryMap.containsKey(String.valueOf(week))) {
+                                            String ontime = TimeFormat.getInDays(ontimeHistoryMap.get(String.valueOf(week)));
+                                            String afkTime;
+                                            if (afkHistoryMap.containsKey(String.valueOf(week + 1))) {
+                                                afkTime = TimeFormat.getInDays(afkHistoryMap.get(String.valueOf(week)) - afkHistoryMap.get(String.valueOf(week + 1)));
+                                            } else {
+                                                afkTime = TimeFormat.getInDays(afkHistoryMap.get(String.valueOf(week)));
+                                            }
+                                            inventory.setItem(i,
+                                                    SkullItems.getNumberSkull(week,
+                                                            (week == 1 ? "§aLetzte Woche" : (week == 2 ? "§aVorletzte Woche" : "§aVor " + week + " Wochen")),
+                                                            Lists.newArrayList("§7» Ontime: §a" + ontime,
+                                                                    "§7» AFK-Zeit: §a" + afkTime)));
                                         }
-                                        inventory.setItem(i,
-                                                SkullItems.getNumberSkull(week,
-                                                        (week == 1 ? "§aLetzte Woche" : (week == 2 ? "§aVorletzte Woche" : "§aVor " + week + " Wochen")),
-                                                        Lists.newArrayList("§7» Ontime: §a" + ontime,
-                                                                "§7» AFK-Zeit: §a" + afkTime)));
                                     }
+                                    p.openInventory(inventory);
+                                    p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
                                 }
-                                p.openInventory(inventory);
-                                p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
+                                return;
                             }
-                            return;
-                        }
-                        if(title.startsWith("§a» ")) {
-                            e.setCancelled(true);
+                            if(title.startsWith("§a» ")) {
+                                e.setCancelled(true);
+                            }
                         }
                     }
                 }
