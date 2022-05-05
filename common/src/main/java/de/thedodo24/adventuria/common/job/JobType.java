@@ -31,7 +31,7 @@ public enum JobType {
         this.id = id;
     }
 
-    public static JobType byId(int id) {
+    public static JobType byId(long id) {
         Optional<JobType> optional = jobTypes().stream().filter(type -> type.getId() == id).findAny();
         return optional.orElse(GENERAL);
     }
