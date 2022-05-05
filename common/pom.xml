@@ -24,6 +24,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+            <version>1.18.24</version>
         </dependency>
         <dependency>
             <groupId>net.essentialsx</groupId>
@@ -32,6 +33,7 @@
         <dependency>
             <groupId>com.arangodb</groupId>
             <artifactId>arangodb-java-driver</artifactId>
+            <version>6.16.1</version>
         </dependency>
     </dependencies>
 
