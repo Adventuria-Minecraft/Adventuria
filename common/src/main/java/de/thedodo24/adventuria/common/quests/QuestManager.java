@@ -7,7 +7,6 @@ import com.google.common.collect.Lists;
 import de.thedodo24.adventuria.common.CommonModule;
 import de.thedodo24.adventuria.common.arango.CollectionManager;
 import de.thedodo24.adventuria.common.job.JobType;
-import de.thedodo24.adventuria.common.player.User;
 import lombok.Getter;
 import org.bukkit.Material;
 
@@ -31,12 +30,12 @@ public class QuestManager extends CollectionManager<Quest, Long> {
             getOrGenerate(getHighestID(), key -> new CollectQuest(key,
                     JobType.WOOD,
                     new HashMap<>(){{
-                        put(Material.ACACIA_WOOD, 9*64L);
-                        put(Material.BIRCH_WOOD, 9*64L);
-                        put(Material.DARK_OAK_WOOD, 9*64L);
-                        put(Material.JUNGLE_WOOD, 9*64L);
-                        put(Material.OAK_WOOD, 9*64L);
-                        put(Material.SPRUCE_WOOD, 9*64L);
+                        put(Material.ACACIA_LOG, 9*64L);
+                        put(Material.BIRCH_LOG, 9*64L);
+                        put(Material.DARK_OAK_LOG, 9*64L);
+                        put(Material.JUNGLE_LOG, 9*64L);
+                        put(Material.OAK_LOG, 9*64L);
+                        put(Material.SPRUCE_LOG, 9*64L);
                     }},
                     true,
                     CollectQuests.GET,
@@ -86,7 +85,7 @@ public class QuestManager extends CollectionManager<Quest, Long> {
                         put(Material.STRING, 64L);
                     }},
                     true,
-                    CollectQuests.GET,
+                    CollectQuests.COLLECT,
                     "Sammle 1 Stack Gunpowder, Knochen, Verrottendes-Fleisch oder Fäden"));
             getOrGenerate(getHighestID() + 1, key -> new CollectQuest(key,
                     JobType.HUNT,
@@ -95,7 +94,7 @@ public class QuestManager extends CollectionManager<Quest, Long> {
                         put(Material.BONE, 64L);
                     }},
                     true,
-                    CollectQuests.GET,
+                    CollectQuests.COLLECT,
                     "Jäger Aufgabe 2"));
             getOrGenerate(getHighestID() + 1, key -> new CollectQuest(key,
                     JobType.BUTCHER,
@@ -106,7 +105,7 @@ public class QuestManager extends CollectionManager<Quest, Long> {
                         put(Material.CHICKEN, 64L);
                     }},
                     true,
-                    CollectQuests.GET,
+                    CollectQuests.COLLECT,
                     "Sammle 1 Stack Rinder-, Schweine-, Hammel- oder Hühnchenfleisch"));
             getOrGenerate(getHighestID() + 1, key -> new CollectQuest(key,
                     JobType.BUTCHER,
@@ -115,7 +114,7 @@ public class QuestManager extends CollectionManager<Quest, Long> {
                         put(Material.PORKCHOP, 64L);
                     }},
                     true,
-                    CollectQuests.GET,
+                    CollectQuests.COLLECT,
                     "Metzger Aufgabe 2"));
             getOrGenerate(getHighestID() + 1, key -> new CollectQuest(key,
                     JobType.MINER,
@@ -142,12 +141,12 @@ public class QuestManager extends CollectionManager<Quest, Long> {
                         put(Material.STICK, 64L);
                     }},
                     true,
-                    CollectQuests.GET,
+                    CollectQuests.COLLECT,
                     "Testaufgabe Allgemein 1"));
             getOrGenerate(getHighestID() + 1, key -> new CollectQuest(key,
                     JobType.GENERAL,
                     new HashMap<>(){{
-                        put(Material.STONE, 64L);
+                        put(Material.GLASS, 64L);
                     }},
                     true,
                     CollectQuests.BUILD,

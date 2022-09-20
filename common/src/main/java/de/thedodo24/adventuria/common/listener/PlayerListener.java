@@ -12,6 +12,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.kyori.examination.ExaminableProperty;
+import org.apache.logging.log4j.util.Strings;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -37,7 +38,7 @@ public class PlayerListener implements Listener {
          Player p = e.getPlayer();
          User u = CommonModule.getInstance().getManager().getUserManager().getOrGenerate(p.getUniqueId());
          u.setName(p.getName());
-         CommonModule.getInstance().getPlayerOnline().put(p.getUniqueId(), System.currentTimeMillis());
+         CommonModule.getInstance().playerOnline.put(p.getUniqueId(), System.currentTimeMillis());
          Ontime.checkTime();
      }
 
@@ -115,17 +116,18 @@ public class PlayerListener implements Listener {
          Ontime.checkTime();
          Player p = e.getPlayer();
          User u = CommonModule.getInstance().getManager().getUserManager().get(p.getUniqueId());
-         long ontime = System.currentTimeMillis() - CommonModule.getInstance().getPlayerOnline().get(p.getUniqueId());
-         long afkTime = 0;
-         if(CommonModule.getInstance().getAfkPlayer().containsKey(p.getUniqueId())) {
-             afkTime = System.currentTimeMillis() - CommonModule.getInstance().getAfkPlayer().get(p.getUniqueId());
-             ontime -= afkTime;
-             CommonModule.getInstance().getAfkPlayer().remove(p.getUniqueId());
+         if(CommonModule.getInstance().getPlayerOnline().containsKey(p.getUniqueId())) {
+             long ontime = System.currentTimeMillis() - CommonModule.getInstance().getPlayerOnline().get(p.getUniqueId());
+             if(CommonModule.getInstance().getAfkPlayer().containsKey(p.getUniqueId())) {
+                 long afkTime = System.currentTimeMillis() - CommonModule.getInstance().getAfkPlayer().get(p.getUniqueId());
+                 ontime -= afkTime;
+                 CommonModule.getInstance().getAfkPlayer().remove(p.getUniqueId());
+                 u.updateAfkTime(afkTime);
+             }
+             u.updateOntime(ontime);
+             CommonModule.getInstance().getPlayerOnline().remove(p.getUniqueId());
+             CommonModule.getInstance().getManager().getUserManager().update(u);
          }
-         u.updateOntime(ontime);
-         u.updateAfkTime(afkTime);
-         CommonModule.getInstance().getPlayerOnline().remove(p.getUniqueId());
-         CommonModule.getInstance().getManager().getUserManager().update(u);
      }
 
 

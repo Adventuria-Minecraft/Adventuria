@@ -8,6 +8,7 @@ import de.thedodo24.adventuria.common.inventory.SimpleInventory;
 import de.thedodo24.adventuria.common.job.JobType;
 import de.thedodo24.adventuria.common.player.User;
 import de.thedodo24.adventuria.common.quests.CollectQuest;
+import de.thedodo24.adventuria.common.quests.CollectQuests;
 import de.thedodo24.adventuria.common.quests.Quest;
 import de.thedodo24.adventuria.common.quests.QuestType;
 import de.thedodo24.adventuria.common.utils.Language;
@@ -98,6 +99,12 @@ public class InventoryListener implements Listener {
                                             JobType individualJob = null;
                                             if(user.hasIndividualJob()) {
                                                 individualJob = user.getIndividualJob();
+                                                if(individualJob.equals(jobType)) {
+                                                    p.sendMessage(prefix + Language.getLanguage().get("job-already", individualJob.getName()));
+                                                    p.closeInventory();
+                                                    p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1, 1);
+                                                    return;
+                                                }
                                                 user.removeJob(user.getIndividualJob());
                                             }
                                             user.addJob(jobType);
@@ -136,6 +143,7 @@ public class InventoryListener implements Listener {
                                                     return;
                                                 }
                                             }
+                                            if(collectQuest.getCollectQuestType().equals(CollectQuests.FISH) || collectQuest.getCollectQuestType().equals(CollectQuests.GET)) {
                                                 PlayerInventory playerInventory = p.getInventory();
                                                 List<Boolean> boolList = Lists.newArrayList();
                                                 collectQuest.getCollectMap().forEach((material, i) -> {
@@ -143,10 +151,7 @@ public class InventoryListener implements Listener {
                                                     HashMap<Integer, ? extends ItemStack> allItems = playerInventory.all(material);
                                                     allItems.values().forEach(is -> {
                                                         sum.getAndAdd(is.getAmount());
-                                                        Bukkit.broadcast(Component.text("added " + is.getAmount() + " / " + sum.get()));
                                                     });
-                                                    Bukkit.broadcast(Component.text("finished: " + sum.get() + " / " + i));
-                                                    Bukkit.broadcast(Component.text("added to boollist: " + (sum.get() >= i)));
                                                     boolList.add(sum.get() >= i);
                                                 });
                                                 if(collectQuest.isCountedAsAll()) {
@@ -164,21 +169,22 @@ public class InventoryListener implements Listener {
                                                         return;
                                                     }
                                                 }
-                                                    collectQuest.getCollectMap().forEach((material, i) -> {
-                                                        AtomicInteger a = new AtomicInteger(i);
-                                                        playerInventory.all(material).forEach((place, is) -> {
-                                                            if(a.get() > 0) {
-                                                                if((a.get() - is.getAmount()) >= 0) {
-                                                                    a.addAndGet(-is.getAmount());
-                                                                    playerInventory.setItem(place, null);
-                                                                } else {
-                                                                    is.setAmount(is.getAmount() - a.get());
-                                                                    playerInventory.setItem(place, is);
-                                                                    a.set(0);
-                                                                }
+                                                collectQuest.getCollectMap().forEach((material, i) -> {
+                                                    AtomicInteger a = new AtomicInteger(i);
+                                                    playerInventory.all(material).forEach((place, is) -> {
+                                                        if(a.get() > 0) {
+                                                            if((a.get() - is.getAmount()) >= 0) {
+                                                                a.addAndGet(-is.getAmount());
+                                                                playerInventory.setItem(place, null);
+                                                            } else {
+                                                                is.setAmount(is.getAmount() - a.get());
+                                                                playerInventory.setItem(place, is);
+                                                                a.set(0);
                                                             }
-                                                        });
+                                                        }
                                                     });
+                                                });
+                                            }
                                                     p.sendMessage(prefix + Language.getLanguage().get("quest-completed"));
                                                     p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
                                                     user.setQuestProgress(collectQuest, -1L);

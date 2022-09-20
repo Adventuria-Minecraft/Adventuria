@@ -1,13 +1,11 @@
 package de.thedodo24.adventuria.common.player;
 
 import com.arangodb.entity.BaseDocument;
+import com.google.common.collect.Lists;
 import de.thedodo24.adventuria.common.CommonModule;
 import de.thedodo24.adventuria.common.arango.ArangoWritable;
 import de.thedodo24.adventuria.common.job.JobType;
-import de.thedodo24.adventuria.common.quests.CheckQuest;
-import de.thedodo24.adventuria.common.quests.CollectQuest;
-import de.thedodo24.adventuria.common.quests.Quest;
-import de.thedodo24.adventuria.common.quests.QuestType;
+import de.thedodo24.adventuria.common.quests.*;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -389,7 +387,7 @@ public class User implements ArangoWritable<UUID> {
     private void updateQuestList(HashMap<String, Object> questObjectMap, long job) {
         HashMap<String, HashMap<String, Object>> jobHashMap = activeJobsParent();
         jobHashMap.replace(job + "", questObjectMap);
-        updateProperty("activeJobs", jobHashMap);
+        updateJobProperty("activeJobs", jobHashMap);
     }
 
 
@@ -397,6 +395,21 @@ public class User implements ArangoWritable<UUID> {
         HashMap<String, Object> longQuestList = questList(type.getId());
         return longQuestList.keySet().stream().filter(key -> !key.equalsIgnoreCase("active"))
                 .map(q -> CommonModule.getInstance().getManager().getQuestManager().get(Long.parseLong(q))).toList();
+    }
+
+    public List<Quest> getQuestsByType(QuestType type) {
+        List<Quest> quests = getJobQuests(JobType.GENERAL);
+        if(hasIndividualJob()) {
+            List<Quest> individualQuests = getJobQuests(getIndividualJob());
+            quests.addAll(individualQuests);
+            if(individualQuests.stream().filter(this::checkFinishedQuest).count() == individualQuests.size())
+                quests.addAll(getJobQuests(JobType.EXTRA));
+        }
+        return quests.stream().filter(q -> q.getQuestType() == type).toList();
+    }
+
+    public List<CollectQuest> getCollectQuestsByType(CollectQuests type) {
+        return getQuestsByType(QuestType.COLLECT).stream().map(Quest::toCollectQuest).filter(cq -> cq.getCollectQuestType() == type).toList();
     }
 
     public void setJobQuests(JobType type, List<Quest> jobQuests) {
@@ -414,6 +427,7 @@ public class User implements ArangoWritable<UUID> {
             } else
                 questHashMap.put(q.getKey() + "", false);
         }
+        questHashMap.put("active", activeJobsParent().get(type.getId() + "").get("active"));
         updateQuestList(questHashMap, type.getId());
     }
 
