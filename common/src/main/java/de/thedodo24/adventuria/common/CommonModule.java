@@ -24,7 +24,7 @@ public class CommonModule extends Module {
     @Getter
     private static CommonModule instance;
 
-    private final Map<UUID, Long> playerOnline = new HashMap<>();
+    public final Map<UUID, Long> playerOnline = new HashMap<>();
     private final Map<UUID, Long> afkPlayer = new HashMap<>();
 
     private long nextDay;
@@ -99,6 +99,7 @@ public class CommonModule extends Module {
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
         nextWeek = calendar.getTimeInMillis();
+        //nextWeek = System.currentTimeMillis() + 20000;
         return nextWeek;
     }
 
