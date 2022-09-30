@@ -3,7 +3,9 @@ package de.thedodo24.adventuria.common.listener;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonElement;
 import de.thedodo24.adventuria.common.CommonModule;
+import de.thedodo24.adventuria.common.player.CustomScoreboardType;
 import de.thedodo24.adventuria.common.player.User;
+import de.thedodo24.adventuria.common.utils.ManagerScoreboard;
 import de.thedodo24.adventuria.common.utils.Ontime;
 import de.thedodo24.adventuria.common.utils.SkullItems;
 import de.thedodo24.adventuria.common.utils.TimeFormat;
@@ -28,6 +30,7 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class PlayerListener implements Listener {
@@ -40,6 +43,33 @@ public class PlayerListener implements Listener {
          u.setName(p.getName());
          CommonModule.getInstance().playerOnline.put(p.getUniqueId(), System.currentTimeMillis());
          Ontime.checkTime();
+         if(!u.isSetProperty("scoreboard")) {
+             u.getValues().put("scoreboard", new HashMap<String, HashMap<String, String>>() {{
+                 put("0", new HashMap<>() {{
+                     put("type", CustomScoreboardType.MONEY.toString());
+                     put("value", "");
+                 }});
+                 put("1", new HashMap<>() {{
+                     put("type", CustomScoreboardType.ONLINE.toString());
+                     put("value", "");
+                 }});
+             }});
+         } else {
+             if(!((Map<String, Map<String, String>>) u.getProperty("scoreboard")).containsKey("0")) {
+                 u.getValues().replace("scoreboard", new HashMap<String, HashMap<String, String>>() {{
+                     put("0", new HashMap<>() {{
+                         put("type", CustomScoreboardType.MONEY.toString());
+                         put("value", "");
+                     }});
+                     put("1", new HashMap<>() {{
+                         put("type", CustomScoreboardType.ONLINE.toString());
+                         put("value", "");
+                     }});
+                 }});
+             }
+         }
+         new ManagerScoreboard(p);
+         ManagerScoreboard.getScoreboardMap().forEach((key, val) -> val.sendScoreboard(Bukkit.getPlayer(key)));
      }
 
     @EventHandler

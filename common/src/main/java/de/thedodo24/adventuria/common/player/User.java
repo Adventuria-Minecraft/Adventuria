@@ -6,19 +6,24 @@ import de.thedodo24.adventuria.common.CommonModule;
 import de.thedodo24.adventuria.common.arango.ArangoWritable;
 import de.thedodo24.adventuria.common.job.JobType;
 import de.thedodo24.adventuria.common.quests.*;
+import de.thedodo24.adventuria.common.utils.ManagerScoreboard;
+import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.EntityType;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.Executors;
 
 public class User implements ArangoWritable<UUID> {
 
     private UUID key;
 
+    @Getter
     public Map<String, Object> values = new HashMap<>();
 
     public User(UUID key) {
@@ -71,6 +76,16 @@ public class User implements ArangoWritable<UUID> {
                 put("200", extraHashMap);
             }});
             JobType.jobTypes().forEach(jobType -> put(jobType.toString(), 0L));
+        }});
+        values.put("scoreboard", new HashMap<String, HashMap<String, String>>(){{
+            put("0", new HashMap<>() {{
+                put("type", CustomScoreboardType.MONEY.toString());
+                put("value", "");
+            }});
+            put("1", new HashMap<>() {{
+                put("type", CustomScoreboardType.ONLINE.toString());
+                put("value", "");
+            }});
         }});
     }
 
@@ -135,18 +150,70 @@ public class User implements ArangoWritable<UUID> {
     public long depositMoney(long v) {
         final long finalBalance = v + getBalance();
         updateProperty("moneyBalance", finalBalance);
+        Executors.newSingleThreadExecutor().execute(() -> ManagerScoreboard.getScoreboardMap().forEach((key, val) -> val.sendScoreboard(Bukkit.getPlayer(key))));
         return finalBalance;
     }
 
     public long withdrawMoney(long v) {
         final long finalBalance = getBalance() - v;
         updateProperty("moneyBalance", finalBalance);
+        Executors.newSingleThreadExecutor().execute(() -> ManagerScoreboard.getScoreboardMap().forEach((key, val) -> val.sendScoreboard(Bukkit.getPlayer(key))));
         return finalBalance;
     }
 
     public long setBalance(long v) {
         updateProperty("moneyBalance", v);
+        Executors.newSingleThreadExecutor().execute(() -> ManagerScoreboard.getScoreboardMap().forEach((key, val) -> val.sendScoreboard(Bukkit.getPlayer(key))));
         return v;
+    }
+
+    //CUSTOM SCOREBOARD
+
+    public void setCustomScoreboard(Map<String, Map<String, String>> customScoreboard) {
+        updateProperty("scoreboard", customScoreboard);
+    }
+
+    public void unsetScoreboard(CustomScoreboardType type) {
+        Map<String, Map<String, String>> map = ((Map<String, Map<String, String>>) getProperty("scoreboard"));
+        map.keySet().stream().filter(key -> map.get(key).get("type").equalsIgnoreCase(type.toString())).forEach(map::remove);
+        setCustomScoreboard(map);
+    }
+
+    public void setCustomScoreboard(int place, Map<String, String> customScoreboard) {
+        Map<String, Map<String, String>> scoreboard = ((Map<String, Map<String, String>>) getProperty("scoreboard"));
+        if(scoreboard.containsKey(place))
+            scoreboard.replace(String.valueOf(place), customScoreboard);
+        else
+            scoreboard.put(String.valueOf(place), customScoreboard);
+    }
+
+    public void unsetCustomScoreboard(int place) {
+
+        ((Map<String, Map<String, String>>) getProperty("scoreboard")).remove(String.valueOf(place));
+    }
+
+    public boolean checkCustomScoreboard(int place) {
+        return ((Map<String, Map<String, String>>) getProperty("scoreboard")).containsKey(String.valueOf(place));
+    }
+
+    public boolean checkCustomScoreboard(CustomScoreboardType type) {
+        return ((Map<String, Map<String, String>>) getProperty("scoreboard")).values().stream().map(map -> map.get("type")).anyMatch(string -> type.toString().equalsIgnoreCase(string));
+    }
+
+    public Integer getCustomScoreboardLine(CustomScoreboardType type) {
+        Map<String, Map<String, String>> map = ((Map<String, Map<String, String>>) getProperty("scoreboard"));
+        return Integer.parseInt(map.keySet().stream().filter(key -> map.get(key).get("type").equalsIgnoreCase(type.toString())).findFirst().get());
+    }
+
+    public Map<String, String> getCustomScoreboard(int place) {
+        Map<String, Map<String, String>> scoreboard = ((Map<String, Map<String, String>>) getProperty("scoreboard"));
+        if(scoreboard.containsKey(String.valueOf(place)))
+            return scoreboard.get(String.valueOf(place));
+        return null;
+    }
+
+    public Map<String, Map<String, String>> getCustomScoreboard() {
+        return ((Map<String, Map<String, String>>) getProperty("scoreboard"));
     }
 
     // ONTIME
@@ -412,6 +479,10 @@ public class User implements ArangoWritable<UUID> {
         return getQuestsByType(QuestType.COLLECT).stream().map(Quest::toCollectQuest).filter(cq -> cq.getCollectQuestType() == type).toList();
     }
 
+    public List<EntityQuest> getEntityQuestByType(EntityQuests type) {
+        return getQuestsByType(QuestType.ENTITY).stream().map(Quest::toEntityQuest).filter(eq -> eq.getEntityQuestType() == type).toList();
+    }
+
     public void setJobQuests(JobType type, List<Quest> jobQuests) {
         HashMap<String, Object> questHashMap = new HashMap<>();
         for(Quest q : jobQuests) {
@@ -470,6 +541,8 @@ public class User implements ArangoWritable<UUID> {
                 questList.replace(quest.getKey() + "", p + progress);
                 updateQuestList(questList, quest.getJobType().getId());
             }
+        } else if(quest.getQuestType().equals(QuestType.ENTITY)) {
+
         }
     }
 
@@ -490,6 +563,24 @@ public class User implements ArangoWritable<UUID> {
         }
     }
 
+    public void addQuestProgress(Quest quest, long progress, EntityType entity) {
+        if(quest.getQuestType().equals(QuestType.ENTITY)) {
+            EntityQuest eq = quest.toEntityQuest();
+            HashMap<String, Object> questList = questList(quest.getJobType().getId());
+            if(!eq.isCountAsAll()) {
+                Object o =questList.get(quest.getKey() + "");
+                if(o instanceof HashMap<?,?>) {
+                    HashMap<String, Long> materialLongMap = (HashMap<String, Long>) questList.get(quest.getKey() + "");
+                    long p = materialLongMap.get(entity.toString());
+                    materialLongMap.replace(entity.toString(), progress + p);
+                    questList.replace(quest.getKey() + "", materialLongMap);
+                    updateQuestList(questList, quest.getJobType().getId());
+                }
+            }
+        }
+    }
+
+
     public long getQuestProgress(Quest quest) {
         if(quest.getQuestType().equals(QuestType.COLLECT)) {
             CollectQuest cq = quest.toCollectQuest();
@@ -502,6 +593,19 @@ public class User implements ArangoWritable<UUID> {
                         return Math.min(progress, max);
                     }
                 }
+        } else if(quest.getQuestType().equals(QuestType.ENTITY)) {
+            EntityQuest eq = quest.toEntityQuest();
+            if(eq.getEntityQuestType().equals(EntityQuests.KILL)) {
+                HashMap<String, Object> questList = questList(quest.getJobType().getId());
+                if(questList.containsKey(quest.getKey() + "")) {
+                    Object o = questList.get(quest.getKey() + "");
+                    if(o instanceof Long) {
+                        long progress = (long) o;
+                        long max = eq.getEntityHashMap().get(eq.getEntityHashMap().keySet().stream().findFirst().get());
+                        return Math.min(progress, max);
+                    }
+                }
+            }
         }
         return 0L;
     }
@@ -521,6 +625,22 @@ public class User implements ArangoWritable<UUID> {
         return 0L;
     }
 
+    public long getQuestProgress(Quest quest, EntityType entityType) {
+        if(quest.getQuestType().equals(QuestType.ENTITY)) {
+            EntityQuest eq = quest.toEntityQuest();
+            if(!eq.isCountAsAll()) {
+                HashMap<String, Object> questList = questList(quest.getJobType().getId());
+                if (questList.containsKey(quest.getKey() + "")) {
+                    HashMap<String, Long> materialLongMap = (HashMap<String, Long>) questList.get(quest.getKey() + "");
+                    long progress = materialLongMap.get(entityType.toString());
+                    long max = eq.getEntityHashMap().get(entityType);
+                    return Math.min(progress, max);
+                }
+            }
+        }
+        return 0L;
+    }
+
     public boolean checkFinishedQuest(Quest quest) {
         if(quest.getQuestType().equals(QuestType.CHECK)) {
             HashMap<String, Object> questList = questList(quest.getJobType().getId());
@@ -530,6 +650,9 @@ public class User implements ArangoWritable<UUID> {
         } else if(quest.getQuestType().equals(QuestType.COLLECT)) {
             CollectQuest cq = quest.toCollectQuest();
             return getQuestProgress(cq) == -1L;
+        } else if(quest.getQuestType().equals(QuestType.ENTITY)) {
+            EntityQuest eq = quest.toEntityQuest();
+            return getQuestProgress(eq) == -1;
         }
         return false;
     }
