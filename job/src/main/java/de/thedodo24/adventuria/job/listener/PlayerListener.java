@@ -4,10 +4,7 @@ import com.google.common.collect.Lists;
 import de.thedodo24.adventuria.common.CommonModule;
 import de.thedodo24.adventuria.common.job.JobType;
 import de.thedodo24.adventuria.common.player.User;
-import de.thedodo24.adventuria.common.quests.CollectQuest;
-import de.thedodo24.adventuria.common.quests.CollectQuests;
-import de.thedodo24.adventuria.common.quests.Quest;
-import de.thedodo24.adventuria.common.quests.QuestType;
+import de.thedodo24.adventuria.common.quests.*;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -66,6 +63,17 @@ public class PlayerListener implements Listener {
                 } else {
                     killCooldown.put(killer.getUniqueId(), System.currentTimeMillis() + 60000);
                     killMap.put(killer.getUniqueId(), dropsAmount);
+                }
+            } else if(user.getEntityQuestByType(EntityQuests.KILL).stream().anyMatch(q -> !user.checkFinishedQuest(q))) {
+                List<EntityQuest> entityQuests = user.getEntityQuestByType(EntityQuests.KILL).stream().filter(q -> q.getEntityHashMap().containsKey(e.getType())).toList();
+                if(entityQuests.size() > 0) {
+                    for(EntityQuest quest : entityQuests) {
+                        if(quest.isCountAsAll()) {
+                            user.addQuestProgress(quest, 1);
+                        } else {
+                            user.addQuestProgress(quest, 1, e.getType());
+                        }
+                    }
                 }
             }
         }

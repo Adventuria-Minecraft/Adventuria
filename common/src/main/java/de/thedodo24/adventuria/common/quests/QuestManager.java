@@ -9,6 +9,7 @@ import de.thedodo24.adventuria.common.arango.CollectionManager;
 import de.thedodo24.adventuria.common.job.JobType;
 import lombok.Getter;
 import org.bukkit.Material;
+import org.bukkit.entity.EntityType;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -87,15 +88,15 @@ public class QuestManager extends CollectionManager<Quest, Long> {
                     true,
                     CollectQuests.COLLECT,
                     "Sammle 1 Stack Gunpowder, Knochen, Verrottendes-Fleisch oder Fäden"));
-            getOrGenerate(getHighestID() + 1, key -> new CollectQuest(key,
+            getOrGenerate(getHighestID() + 1, key -> new EntityQuest(key,
                     JobType.HUNT,
-                    new HashMap<>(){{
-                        put(Material.GUNPOWDER, 64L);
-                        put(Material.BONE, 64L);
+                    "Jägeraufgabe 2",
+                    EntityQuests.KILL,
+                    new HashMap<>() {{
+                        put(EntityType.PIG, 5L);
                     }},
-                    true,
-                    CollectQuests.COLLECT,
-                    "Jäger Aufgabe 2"));
+                    false
+                    ));
             getOrGenerate(getHighestID() + 1, key -> new CollectQuest(key,
                     JobType.BUTCHER,
                     new HashMap<>(){{

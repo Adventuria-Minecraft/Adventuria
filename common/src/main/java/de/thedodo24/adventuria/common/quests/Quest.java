@@ -10,6 +10,7 @@ import de.thedodo24.adventuria.common.utils.Language;
 import it.unimi.dsi.fastutil.Hash;
 import lombok.Getter;
 import org.bukkit.Material;
+import org.bukkit.entity.EntityType;
 
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +24,7 @@ public class Quest implements ArangoWritable<Long> {
     Map<String, Object> values = new HashMap<>();
 
     private static HashMap<Long, CollectQuest> collectQuestMap = new HashMap<>();
+    private static HashMap<Long, EntityQuest> entityQuestMap = new HashMap<>();
 
     public Quest(Long key, JobType jobType, String questText) {
         this.key = key;
@@ -84,6 +86,17 @@ public class Quest implements ArangoWritable<Long> {
                 } else {
                     cq.getCollectMap().keySet().forEach(m -> lore.add((user.getQuestProgress(this, m) >= cq.getCollectMap().get(m) ? "§a" : "§7") + Language.getMaterials().get(m.translationKey()) + ": " + user.getQuestProgress(this, m) + "/" + cq.getCollectMap().get(m) + (user.getQuestProgress(this, m) >= cq.getCollectMap().get(m) ? " §a✓" : "§7")));
                 }
+            } else if(getQuestType().equals(QuestType.ENTITY)) {
+                EntityQuest eq = toEntityQuest();
+                if(eq.getEntityQuestType().equals(EntityQuests.KILL)) {
+                    if (eq.isCountAsAll()) {
+                        lore.add((user.getQuestProgress(this) >= eq.getEntityHashMap().get(eq.getEntityHashMap().keySet().stream().findFirst().get()) ? "§a" : "§7") + user.getQuestProgress(this) + "/" + eq.getEntityHashMap().get(eq.getEntityHashMap().keySet().stream().findFirst().get()) + (user.getQuestProgress(this) >= eq.getEntityHashMap().get(eq.getEntityHashMap().keySet().stream().findFirst().get()) ? " §a✓" : "§7"));
+                    } else {
+                        eq.getEntityHashMap().keySet().forEach(m -> lore.add((user.getQuestProgress(this, m) >= eq.getEntityHashMap().get(m) ? "§a" : "§7") + Language.getMaterials().get(m.translationKey()) + ": " + user.getQuestProgress(this, m) + "/" + eq.getEntityHashMap().get(m) + (user.getQuestProgress(this, m) >= eq.getEntityHashMap().get(m) ? " §a✓" : "§7")));
+                    }
+                } else {
+                    lore.add("§c× Nicht abgeschlossen");
+                }
             }
         } else {
             lore.add("§a✓ Abgeschlossen");
@@ -109,6 +122,19 @@ public class Quest implements ArangoWritable<Long> {
             return cq;
         }
 
+    }
+
+    public EntityQuest toEntityQuest() {
+        if(entityQuestMap.containsKey(getKey())) {
+            return entityQuestMap.get(getKey());
+        } else {
+            HashMap<String, Long> collectMap = (HashMap<String, Long>) getValues().get("collectMap");
+            HashMap<EntityType, Long> collectEntityMap = new HashMap<>();
+            collectMap.forEach((k, v) -> collectEntityMap.put(EntityType.valueOf(k), v));
+            EntityQuest eq = new EntityQuest(key, getJobType(), getQuestText(), EntityQuests.valueOf((String) getValues().get("entityQuestType")), collectEntityMap, (boolean) getValues().get("countAsAll"));
+            entityQuestMap.put(getKey(), eq);
+            return eq;
+        }
     }
 
 }
