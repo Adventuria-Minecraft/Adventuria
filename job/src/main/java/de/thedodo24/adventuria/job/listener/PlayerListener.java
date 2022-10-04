@@ -37,7 +37,6 @@ public class PlayerListener implements Listener {
         Player p = e.getPlayer();
         Entity entity = e.getCaught();
         if(entity != null) {
-            Bukkit.broadcast(Component.text("fish added to fish map"));
             if(fishMap.containsKey(p.getUniqueId()))
                 fishMap.replace(p.getUniqueId(), entity.getEntityId());
             else
@@ -81,14 +80,10 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPickup(EntityPickupItemEvent e) {
-        Bukkit.broadcast(Component.text("event"));
         if(e.getEntity() instanceof Player p) {
-            Bukkit.broadcast(Component.text("entity pickup"));
             User u = CommonModule.getInstance().getManager().getUserManager().get(p.getUniqueId());
             if(fishMap.containsKey(p.getUniqueId())) {
                 Item pickUp = e.getItem();
-                Bukkit.broadcast(Component.text("player in fishmap with " + fishMap.get(p.getUniqueId())));
-                Bukkit.broadcast(Component.text("entity id pickup: " + pickUp.getEntityId()));
                 if(pickUp.getEntityId() == fishMap.get(p.getUniqueId())) {
                     fishMap.remove(p.getUniqueId());
                     Material material = pickUp.getItemStack().getType();

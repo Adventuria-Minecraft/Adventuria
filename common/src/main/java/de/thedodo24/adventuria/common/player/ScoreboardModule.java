@@ -68,6 +68,10 @@ public class ScoreboardModule {
                 Date date = TimeFormat.ticksToDate(Bukkit.getPlayer(user.getKey()).getWorld().getTime());
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm", Locale.GERMAN);
                 return simpleDateFormat.format(date);
+            case JOB:
+                if(user.hasIndividualJob())
+                    return user.getIndividualJob().getName();
+                return "Kein Job";
             default:
                 return "";
         }

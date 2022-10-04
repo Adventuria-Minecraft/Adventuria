@@ -7,5 +7,6 @@ public enum CustomScoreboardType {
     ONTIME,
     TPS,
     PING,
+    JOB,
     WORLDTIME;
 }
