@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>de.thedodo24</groupId>
-    <artifactId>adventuria</artifactId>
-    <version>0.1-BETA</version>
+    <artifactId>xenrodsystem</artifactId>
+    <version>0.1-ALPHA</version>
     <packaging>pom</packaging>
     <modules>
         <module>bootstrap</module>
@@ -15,13 +15,13 @@
         <module>job</module>
     </modules>
 
-    <name>Adventuria</name>
+    <name>XenrodSystem</name>
 
     <scm>
         <url>https://svn.apache.org/viewvc/maven</url>
     </scm>
 
-    <description>Adventuria system plugin</description>
+    <description>XenrodSystem is the server system plugin for EvergreenMC Minecraft server</description>
     <properties>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -60,7 +60,7 @@
             <dependency>
                 <groupId>io.papermc.paper</groupId>
                 <artifactId>paper-api</artifactId>
-                <version>1.18.1-R0.1-SNAPSHOT</version>
+                <version>1.19.2-R0.1-SNAPSHOT</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>

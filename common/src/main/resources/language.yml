@@ -1,12 +1,15 @@
 no-permissions: "§cYou do not have the permission to execute this command. ({0})"
-haveto-player: "[Adventuria] Du musst ein Spieler sein."
+haveto-player: "[Evergreen] Du musst ein Spieler sein."
 player-not-exists: "Der Spieler §c{0} §7existiert nicht."
 argument-has-to-be: "§cArgument {0} §7muss {1} sein. §8({2})"
+prefix: "§7§l| §aEvergreen §7» "
 
 #|----------|
 #   MONEY
 #|----------|
 money-prefix: "§7§l| §aGeld §7» "
+money-value-one: "Coin"
+money-value: "Coins"
 
 # HELP MESSAGE
 money-help-pay: "/money pay [Name] [Betrag]"

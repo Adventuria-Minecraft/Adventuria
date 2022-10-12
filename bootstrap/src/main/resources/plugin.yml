@@ -1,26 +1,25 @@
-name: Adventuria
+name: XenrodSystem
 version: '${project.version}'
-main: de.thedodo24.adventuria.Adventuria
+main: de.thedodo24.xenrodsystem.XenrodSystem
 api-version: 1.18
-prefix: Adventuria
+prefix: XenrodSystem
 loadbefore: [ Essentials ]
 softdepend: [ Vault ]
 depend: [ Essentials ]
 author: TheDodo24
-description: Adventuria system plugin
+description: XenrodSystem is the server system for EvergreenMC Minecraft Server
 
 commands:
   money:
     description: "Economy system. Type '/money help' for help"
   ontime:
     description: "Ontime system. Type '/ontime help' for help"
-  adventuria:
-    description: "Management command for plugin"
-    permission: advi.manage
   job:
     description: "Job system. Type '/job help' for help"
   quest:
     description: "Quest overview"
+  sboard:
+    description: "Manage players scoreboard"
 
 permissions:
   money.*:
@@ -41,9 +40,3 @@ permissions:
     description: "/money set"
   money.notify:
     description: "Money notifications"
-  advi.*:
-    description: "Plugin management admin commands"
-    children:
-      advi.manage: true
-  advi.manage:
-    description: "/adventuria"
