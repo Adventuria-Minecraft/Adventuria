@@ -31,66 +31,56 @@ public class QuestManager extends CollectionManager<Quest, Long> {
             getOrGenerate(getHighestID(), key -> new CollectQuest(key,
                     JobType.WOOD,
                     new HashMap<>(){{
-                        put(Material.ACACIA_LOG, 9*64L);
-                        put(Material.BIRCH_LOG, 9*64L);
-                        put(Material.DARK_OAK_LOG, 9*64L);
-                        put(Material.JUNGLE_LOG, 9*64L);
-                        put(Material.OAK_LOG, 9*64L);
-                        put(Material.SPRUCE_LOG, 9*64L);
+                        put(Material.ACACIA_LOG, 4L);
+                        put(Material.BIRCH_LOG, 4L);
+                        put(Material.DARK_OAK_LOG, 4L);
+                        put(Material.JUNGLE_LOG, 4L);
+                        put(Material.OAK_LOG, 4L);
+                        put(Material.SPRUCE_LOG, 4L);
                     }},
                     true,
                     CollectQuests.GET,
-                    "Sammle 9 Stacks Holz"));
+                    "Sammle 16 Stücke Holz"));
             getOrGenerate(getHighestID() + 1, key -> new CollectQuest(key,
                     JobType.WOOD,
                     new HashMap<>(){{
-                        put(Material.ACACIA_SAPLING, 2*64L);
-                        put(Material.BIRCH_SAPLING, 2*64L);
-                        put(Material.DARK_OAK_SAPLING, 2*64L);
-                        put(Material.JUNGLE_SAPLING, 2*64L);
-                        put(Material.OAK_SAPLING, 2*64L);
-                        put(Material.SPRUCE_SAPLING, 2*64L);
+                        put(Material.ACACIA_SAPLING, 2L);
+                        put(Material.BIRCH_SAPLING, 2L);
+                        put(Material.DARK_OAK_SAPLING, 2L);
+                        put(Material.JUNGLE_SAPLING, 2L);
+                        put(Material.OAK_SAPLING, 2L);
+                        put(Material.SPRUCE_SAPLING, 2L);
                     }},
                     true,
                     CollectQuests.GET,
-                    "Sammle 2 Stacks Setzlinge"));
+                    "Sammle 2 Setzlinge"));
             getOrGenerate(getHighestID() + 1, key -> new CollectQuest(key,
                     JobType.FISH,
                     new HashMap<>(){{
-                        put(Material.COD, 2*64L);
-                        put(Material.SALMON, 2*64L);
+                        put(Material.SALMON, 2L);
                     }},
                     true,
                     CollectQuests.FISH,
-                    "Angle 5 Stacks Kabeljau oder Lachs"));
+                    "Angle 2 Lachs"));
             getOrGenerate(getHighestID() + 1, key -> new CollectQuest(key,
                     JobType.FISH,
                     new HashMap<>(){{
-                        put(Material.COD, 2*64L);
-                        put(Material.SALMON, 2*64L);
+                        put(Material.COD, 2L);
                     }},
                     true,
                     CollectQuests.FISH,
-                    "Sammle in 9 Eimern Kabeljau/Lachs/Puffer-Fische (max. 1) und Tropenfische:\n" +
-                            "- Sammle 1 Kugelfisch, 4 Kabeljau, 3 Lachs & 1 Tropenfisch im Eimer\n" +
-                            "- Sammle 1 Kugelfisch, 3 Kabeljau, 2 Lachs & 3 Tropenfisch im Eimer\n" +
-                            "- Sammle 2 Kabeljau, 2 Lachs & 5 Tropenfisch im Eimer\n" +
-                            "- Sammle 1 Kugelfisch, 1 Kabeljau, 2 Lachs & 5 Tropenfisch im Eimer\n" +
-                            "- Sammle 1 Kugelfisch, 3 Kabeljau, 5 Lachs"));
+                    "Angle 2 Kabeljau"));
             getOrGenerate(getHighestID() + 1, key -> new CollectQuest(key,
                     JobType.HUNT,
                     new HashMap<>(){{
-                        put(Material.GUNPOWDER, 64L);
-                        put(Material.BONE, 64L);
-                        put(Material.ROTTEN_FLESH, 64L);
-                        put(Material.STRING, 64L);
+                        put(Material.GUNPOWDER, 2L);
                     }},
                     true,
                     CollectQuests.COLLECT,
-                    "Sammle 1 Stack Gunpowder, Knochen, Verrottendes-Fleisch oder Fäden"));
+                    "Sammle 2 Gunpowder"));
             getOrGenerate(getHighestID() + 1, key -> new EntityQuest(key,
                     JobType.HUNT,
-                    "Jägeraufgabe 2",
+                    "Töte 2 Schweine",
                     EntityQuests.KILL,
                     new HashMap<>() {{
                         put(EntityType.PIG, 5L);
@@ -100,67 +90,64 @@ public class QuestManager extends CollectionManager<Quest, Long> {
             getOrGenerate(getHighestID() + 1, key -> new CollectQuest(key,
                     JobType.BUTCHER,
                     new HashMap<>(){{
-                        put(Material.BEEF, 64L);
-                        put(Material.PORKCHOP, 64L);
-                        put(Material.MUTTON, 64L);
-                        put(Material.CHICKEN, 64L);
+                        put(Material.BEEF, 2L);
                     }},
                     true,
                     CollectQuests.COLLECT,
-                    "Sammle 1 Stack Rinder-, Schweine-, Hammel- oder Hühnchenfleisch"));
-            getOrGenerate(getHighestID() + 1, key -> new CollectQuest(key,
+                    "Sammle 2 Rinderfleisch"));
+            getOrGenerate(getHighestID() + 1, key -> new EntityQuest(key,
                     JobType.BUTCHER,
+                    "Töte 2 Kühe",
+                    EntityQuests.KILL,
+
                     new HashMap<>(){{
-                        put(Material.BEEF, 64L);
-                        put(Material.PORKCHOP, 64L);
+                        put(EntityType.COW, 2L);
                     }},
-                    true,
-                    CollectQuests.COLLECT,
-                    "Metzger Aufgabe 2"));
+                    true));
             getOrGenerate(getHighestID() + 1, key -> new CollectQuest(key,
                     JobType.MINER,
                     new HashMap<>(){{
-                        put(Material.COBBLESTONE, 9*64L);
-                        put(Material.DEEPSLATE, 9*64L);
+                        put(Material.COBBLESTONE, 6L);
                     }},
                     true,
                     CollectQuests.GET,
-                    "Sammle 9 Stacks Bruchstein oder Tiefenschiefer"));
+                    "Sammle 6 Cobblestone"));
             getOrGenerate(getHighestID() + 1, key -> new CollectQuest(key,
                     JobType.MINER,
                     new HashMap<>(){{
-                        put(Material.RAW_IRON, 2*64L);
-                        put(Material.RAW_COPPER, 2*64L);
-                        put(Material.COAL, 2*64L);
-                    }},
-                    true,
-                    CollectQuests.GET,
-                    "Sammle 2 Stacks Roheisen, Rohkupfer oder Kohle"));
-            getOrGenerate(getHighestID() + 1, key -> new CollectQuest(key,
-                    JobType.GENERAL,
-                    new HashMap<>(){{
-                        put(Material.STICK, 64L);
-                    }},
-                    true,
-                    CollectQuests.COLLECT,
-                    "Testaufgabe Allgemein 1"));
-            getOrGenerate(getHighestID() + 1, key -> new CollectQuest(key,
-                    JobType.GENERAL,
-                    new HashMap<>(){{
-                        put(Material.GLASS, 64L);
-                    }},
-                    true,
-                    CollectQuests.BUILD,
-                    "Testaufgabe Allgemein 2"));
-            getOrGenerate(getHighestID() + 1, key -> new CollectQuest(key,
-                    JobType.GENERAL,
-                    new HashMap<>(){{
-                        put(Material.GRAVEL, 64L);
-                        put(Material.DIRT, 64L);
+                        put(Material.COAL_BLOCK, 4L);
+                        put(Material.GOLD_BLOCK, 4L);
+                        put(Material.IRON_BLOCK, 4L);
                     }},
                     false,
                     CollectQuests.GET,
-                    "Testaufgabe Allgemein 3"));
+                    "Mine 4 Kohleblöcke, Goldblöcke und Eisenblöcke"));
+            getOrGenerate(getHighestID() + 1, key -> new CollectQuest(key,
+                    JobType.GENERAL,
+                    new HashMap<>(){{
+                        put(Material.STICK, 2L);
+                        put(Material.STRING, 2L);
+                    }},
+                    false,
+                    CollectQuests.COLLECT,
+                    "Sammle 2 Sticks und 2 Fäden"));
+            getOrGenerate(getHighestID() + 1, key -> new CollectQuest(key,
+                    JobType.GENERAL,
+                    new HashMap<>(){{
+                        put(Material.GLASS, 2L);
+                    }},
+                    true,
+                    CollectQuests.COLLECT,
+                    "Sammle 2 Gräßer"));
+            getOrGenerate(getHighestID() + 1, key -> new CollectQuest(key,
+                    JobType.GENERAL,
+                    new HashMap<>(){{
+                        put(Material.GRAVEL, 4L);
+                        put(Material.DIRT, 8L);
+                    }},
+                    false,
+                    CollectQuests.BUILD,
+                    "Baue 4 Kiesblöcke und 8 Erdblöcke"));
             getOrGenerate(getHighestID() + 1, key -> new CollectQuest(key,
                     JobType.GENERAL,
                     new HashMap<>(){{
@@ -173,43 +160,48 @@ public class QuestManager extends CollectionManager<Quest, Long> {
             getOrGenerate(getHighestID() + 1, key -> new CollectQuest(key,
                     JobType.GENERAL,
                     new HashMap<>(){{
-                        put(Material.GRANITE, 64L);
+                        put(Material.GRANITE, 4L);
+                        put(Material.ANDESITE, 4L);
                     }},
                     true,
                     CollectQuests.BUILD,
-                    "Testaufgabe Allgemein 5"));
-            getOrGenerate(getHighestID() + 1, key -> new CollectQuest(key,
+                    "Baue 4 Granit- oder Andesitblöcke"));
+            getOrGenerate(getHighestID() + 1, key -> new EntityQuest(key,
                     JobType.GENERAL,
+                    "Töte 2 Hühner",
+                    EntityQuests.KILL,
                     new HashMap<>(){{
-                        put(Material.DIRT, 64L);
+                        put(EntityType.CHICKEN, 2L);
                     }},
-                    true,
-                    CollectQuests.BUILD,
-                    "Testaufgabe Allgemein 6"));
+                    true
+                    ));
+            getOrGenerate(getHighestID() + 1, key -> new EntityQuest(key,
+                    JobType.EXTRA,
+                    "Töte 2 Zombies oder Kühe",
+                    EntityQuests.KILL,
+                    new HashMap<>(){{
+                        put(EntityType.ZOMBIE, 2L);
+                        put(EntityType.COW, 2L);
+                    }},
+                    false));
+            getOrGenerate(getHighestID() + 1, key -> new EntityQuest(key,
+                    JobType.EXTRA,
+                    "Töte 2 Creeper und Skelette",
+                    EntityQuests.KILL,
+                    new HashMap<>(){{
+                        put(EntityType.CREEPER, 2L);
+                        put(EntityType.SKELETON, 2L);
+                    }},
+                    true));
             getOrGenerate(getHighestID() + 1, key -> new CollectQuest(key,
                     JobType.EXTRA,
                     new HashMap<>(){{
-                        put(Material.GRAVEL, 64L);
+                        put(Material.WHITE_WOOL, 4L);
+                        put(Material.BLACK_WOOL, 4L);
                     }},
-                    true,
+                    false,
                     CollectQuests.BUILD,
-                    "Testaufgabe Extra 1"));
-            getOrGenerate(getHighestID() + 1, key -> new CollectQuest(key,
-                    JobType.EXTRA,
-                    new HashMap<>(){{
-                        put(Material.IRON_BLOCK, 64L);
-                    }},
-                    true,
-                    CollectQuests.BUILD,
-                    "Testaufgabe Extra 2"));
-            getOrGenerate(getHighestID() + 1, key -> new CollectQuest(key,
-                    JobType.EXTRA,
-                    new HashMap<>(){{
-                        put(Material.WHITE_WOOL, 64L);
-                    }},
-                    true,
-                    CollectQuests.BUILD,
-                    "Testaufgabe Extra 3"));
+                    "Baue 4 weiße und 4 schwarze Wolle"));
         }
     }
 

@@ -5,7 +5,6 @@ public enum CollectQuests {
     GET,
     COLLECT,
     FISH,
-    KILL,
     BUILD;
 
 
