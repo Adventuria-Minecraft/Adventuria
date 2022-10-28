@@ -127,7 +127,7 @@ public class Quest implements ArangoWritable<Long> {
         if(entityQuestMap.containsKey(getKey())) {
             return entityQuestMap.get(getKey());
         } else {
-            HashMap<String, Long> collectMap = (HashMap<String, Long>) getValues().get("collectMap");
+            HashMap<String, Long> collectMap = (HashMap<String, Long>) getValues().get("entityMap");
             HashMap<EntityType, Long> collectEntityMap = new HashMap<>();
             collectMap.forEach((k, v) -> collectEntityMap.put(EntityType.valueOf(k), v));
             EntityQuest eq = new EntityQuest(key, getJobType(), getQuestText(), EntityQuests.valueOf((String) getValues().get("entityQuestType")), collectEntityMap, (boolean) getValues().get("countAsAll"));
